@@ -22,6 +22,11 @@ async def on_message(message):
   # Return if message is sent by bot
   if(message.author == client.user):
     return
+  if(config_data["adminrole"].lower() in [y.name.lower() for y in message.author.roles]):
+      await message.channel.send("User has role " + config_data["adminrole"])
+  else:
+      print(message.author.roles)
+      print(config_data["adminrole"])
   # See if command is being run
   if(message.content.startswith(prefix)):
     args = message.content[1:].split(' ')
@@ -32,6 +37,9 @@ async def on_message(message):
 
     #See what command was given
     if(command.lower() == "select"):
+      if(not args):
+        await message.channel.send("ERROR: You're missing parameters. Type !help for more info")
+        return
       await message.channel.send("TODO: !" + command.lower())
       await message.channel.send(args[0])
     elif(command.lower() == "submit"):
