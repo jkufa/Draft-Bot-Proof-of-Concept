@@ -1,0 +1,16 @@
+@import url(./fonts.css);
+@import url(./partials/_variables.css);
+@import url(./partials/_global.css);
+@import url(./navbar.css);
+@import url(./home.css);
+@import url(./admin.css);
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent; /* make scrollbar transparent */
+}
+
+.title {
+  text-align: center;
+}
+

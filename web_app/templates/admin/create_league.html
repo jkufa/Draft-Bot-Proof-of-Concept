@@ -1,0 +1,75 @@
+{% extends "_base.html" %}
+{% block title %}Admin{% endblock %}
+{% block body %}
+<main class="admin">
+  <section class="section1">
+    <h1>Admin</h1>
+  </section>
+  <section class="create-league">
+      <h2>Create New League</h2>
+      <form action="#" method="POST">
+        <div class="form-group">
+          <label>League Name</label>
+          <input type="text" class="form-control" id="leagename" name="leaguename" placeholder="Select a league name">
+        </div>
+        <div class="form-group create-league">
+          <label>League Format</label>
+          <select class="form-control" id="format" name="format" placeholder="Select a Format">
+            <option value="" selected disabled>Select format</option>
+            <option>Gen 8 OU</option>
+          </select>
+        </div>
+        <section class="users">
+          <h2>Add Users</h2>
+            <div class="form-row">
+              <button id="extra-user" name="user_num" type="button" class="btn add-user-btn" onclick="duplicate()">Add another user</button>
+            </div>
+         <div id="add-users0" class="add-users fade-in">
+          <div class="form-row">
+            <div class="col">
+              <div class="form-group input-group mb-3 add-user-input">
+                <input type="text" class="form-control" id="discord_username" name="discord_username0" placeholder="Username" aria-label="Username" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                  <span class="input-group-text" id="basic-addon">Example#1234</span>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group add-user-input">
+                <select class="form-control" id="timezone" name="timezone0" placeholder="Select a timezone">
+                  <option value="" selected disabled>Select timezone</option>
+                  <option>CST</option>
+                  <option>GMT</option>
+                  <option>EST</option>
+                  <option>PST</option>
+                </select>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="check-coach" name="check-coach0">
+                <label class="form-check-label" for="check-coach">Make Coach</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="check-admin" name="check-admin0">
+                <label class="form-check-label" for="check-admin">Make Admin</label>
+              </div>
+            </div>
+          </div>
+          </div>
+        </section>
+        <section class="create-tierlist">
+          <h2>Choose Tier List</h2>
+          <div class="form-group add-user-input">
+            <select class="form-control" id="tierlist" name="tierlist" placeholder="Select a tier list">
+              <option value="" selected disabled>Select a tierlist</option>
+              <option>YWNB Season 2</option>
+            </select>
+          </div>
+        </section>
+        <!-- <button type="submit" class="btn">Submit</button> -->
+        <button name="create_league" type="submit" class="btn submit-league" id="submit">SUBMIT LEAGUE</button>
+      </form>
+  <section>
+</main>
+{% endblock %}

@@ -38,7 +38,7 @@ async def on_message(message):
     #See what command was given
     if(command.lower() == "select"):
       if(not args):
-        await message.channel.send("ERROR: You're missing parameters. Type !help for more info")
+        await message.channel.send("ERROR: you're missing parameters. Type !help for more info")
         return
       await message.channel.send("TODO: !" + command.lower())
       await message.channel.send(args[0])
@@ -59,7 +59,7 @@ async def on_message(message):
     elif(command.lower() == "average" or command.lower() == "avg"):
       await message.channel.send("TODO: !" + command.lower())
     else:
-      await message.channel.send("Hey, that's not a valid command!")
+      await message.channel.send("ERROR: that's not a valid command!")
 
 
 client.run(token)

@@ -1,0 +1,35 @@
+.home {
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  height: 100%;
+}
+
+.home img:hover {
+  transition: all 1s ease .2s;
+  scale: 68%;
+}
+
+
+.home h1 {
+  text-align: left;
+  padding: 8rem 3rem 2rem;
+  margin-right: 40%;
+  /* padding-right: 25%; */
+}
+
+.home h4 {
+  text-align: left;
+  padding: 0rem 3rem 3rem;  
+  /* padding-right: 25%; */
+  margin-right: 40%;
+}
+
+.home img {
+  object-fit: cover;
+  padding-left: 10rem;
+  padding-right: 3rem;
+  scale: 70%;
+  transition: all .8s ease .2s;
+  filter: drop-shadow(15px 15px 0px rgba(0,0,0,0.25));
+}

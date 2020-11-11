@@ -1,0 +1,16 @@
+/* CSS vars */
+:root {
+  --primary-color: #F18E55;
+  --secondary-color: #C1584E;
+  --tertiary-color: #F8C77A;
+  --quaternary-color: #677283;
+  --nav: #201E1E;
+  --chestnut: #954627;
+  --dark: #4A3D37;
+  --my-black: #1B1E22;
+  --my-white: #FBFFFE;
+
+  /* Fonts */
+  --work-sans: "Work Sans";
+  --open-sans: "Open Sans"
+}
