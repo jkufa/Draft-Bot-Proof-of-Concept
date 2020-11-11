@@ -10,7 +10,7 @@
       <form action="#" method="POST">
         <div class="form-group">
           <label>League Name</label>
-          <input type="text" class="form-control" id="leagename" name="leaguename" placeholder="Select a league name">
+          <input type="text" class="form-control" id="leaguename" name="leaguename" placeholder="Select a league name" value="test">
         </div>
         <div class="form-group create-league">
           <label>League Format</label>
@@ -22,7 +22,7 @@
         <section class="users">
           <h2>Add Users</h2>
             <div class="form-row">
-              <button id="extra-user" name="user_num" type="button" class="btn add-user-btn" onclick="duplicate()">Add another user</button>
+              <button id="extra-user" name="usernum" type="button" class="btn add-user-btn" value="0" onclick="duplicate()">Add another user</button>
             </div>
          <div id="add-users0" class="add-users fade-in">
           <div class="form-row">
@@ -68,8 +68,8 @@
           </div>
         </section>
         <!-- <button type="submit" class="btn">Submit</button> -->
-        <button name="create_league" type="submit" class="btn submit-league" id="submit">SUBMIT LEAGUE</button>
+        <button name="create_league" type="submit" class="btn submit-league" id="submit" value="0">SUBMIT LEAGUE</button>
       </form>
-  <section>
+    <section>
 </main>
 {% endblock %}

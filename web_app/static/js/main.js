@@ -11,8 +11,8 @@ $(document).ready(function() {
       clone.id = "add-users" + ++i; // there can only be one element with an ID
       original.parentNode.appendChild(clone);
       edit_names(i);
-      var p = {'p':i};
-      console.log(p);
+     var t = document.getElementById('submit').value=i;
+     console.log(t)
   }
   function edit_names(i) {
     var input_controls = document.getElementById('add-users'+i).getElementsByClassName('form-control');
@@ -22,22 +22,4 @@ $(document).ready(function() {
       input_checkboxes[j].name = input_checkboxes[j].name.substring(0, input_checkboxes[j].name.length - 1) + i
     }
   }
-
-  $('#submit').click(function() {
-    console.log("run");
-    $.ajax({
-      type: "POST",
-      contentType: "application/json;charset=utf-8",
-      url: "{{url_for('/create_league')}}",
-      traditional: "true",
-      data: JSON.stringify({hello: "world"}),
-      dataType: "json",
-      success: function(response) {
-        console.log("success");
-      },
-      error: function(err) {
-        console.log(err);
-      }
-    });
-  });
 });

@@ -1,8 +1,7 @@
 html,body {
   margin: 0%;
   box-sizing: border-box;
-  /* background-color: var(--dark); */
-  background-color: #56504E;
+  background-color: var(--secondary-color);
   /* background: rgb(149,70,39); */
   /* background: linear-gradient(45deg, rgba(149,70,39,1) 0%, rgba(43,40,39,1) 100%);  */
   width: 100%;

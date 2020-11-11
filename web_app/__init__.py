@@ -21,11 +21,21 @@ def contact():
 @app.route('/create_league', methods=["GET", "POST"])
 def create_league():
   if request.method == "POST":
-    user_num = request.get_json()
     req = request.form
     league_name = req.get("leaguename")
-    format = req.get("format")
-    print(user_num)
+    league_format = req.get("format")
+    user_num = int(req.get("create_league")) # get num of users
+    users = []
+    timezones = []
+    tierlist = req.get("tierlist")
+    for i in range(0,user_num):
+      users.append(req.get("discord_username"+str(i)))
+      timezones.append(req.get("timezone"+str(i)))
+    print(league_name)
+    print(league_format)
+    print(users)
+    print(timezones)
+    print(tierlist)
     return redirect(request.url)
   return render_template('./admin/create_league.html')
 
