@@ -10,11 +10,11 @@
       <form action="#" method="POST">
         <div class="form-group">
           <label>League Name</label>
-          <input type="text" class="form-control" id="leaguename" name="leaguename" placeholder="Select a league name">
+          <input type="text" class="form-control" id="leaguename" name="leaguename" placeholder="Select a league name" required>
         </div>
         <div class="form-group create-league">
           <label>League Format</label>
-          <select class="form-control" id="format" name="format" placeholder="Select a Format">
+          <select class="form-control" id="format" name="format" placeholder="Select a Format" required>
             <option value="" selected disabled>Select format</option>
             <option>Gen 8 OU</option>
           </select>
@@ -28,7 +28,7 @@
           <div class="form-row">
             <div class="col">
               <div class="form-group input-group mb-3 add-user-input">
-                <input type="text" class="form-control" id="discord_username" name="discord_username0" placeholder="Username" aria-label="Username" aria-describedby="basic-addon2">
+                <input type="text" class="form-control" id="discord_username" name="discord_username0" placeholder="Username" aria-label="Username" aria-describedby="basic-addon2" required>
                 <div class="input-group-append">
                   <span class="input-group-text" id="basic-addon">Example#1234</span>
                 </div>
@@ -36,7 +36,7 @@
             </div>
             <div class="col">
               <div class="form-group add-user-input">
-                <select class="form-control" id="timezone" name="timezone0" placeholder="Select a timezone">
+                <select class="form-control" id="timezone" name="timezone0" placeholder="Select a timezone" required>
                   <option value="" selected disabled>Select timezone</option>
                   <option>CST</option>
                   <option>GMT</option>

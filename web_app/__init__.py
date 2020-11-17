@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, redirect
+# from web_app.py.queries import init_league
+
 app = Flask(__name__)
 app.debug=True
 
@@ -21,21 +23,29 @@ def contact():
 @app.route('/create_league', methods=["GET", "POST"])
 def create_league():
   if request.method == "POST":
+    # POST variables
     req = request.form
     league_name = req.get("leaguename")
     league_format = req.get("format")
-    user_num = int(req.get("create_league")) # get num of users
+    user_num = int(req.get("create_league"))+1 # get num of users
     users = []
     timezones = []
+    is_coach = []
+    is_admin = []
     tierlist = req.get("tierlist")
     for i in range(0,user_num):
       users.append(req.get("discord_username"+str(i)))
       timezones.append(req.get("timezone"+str(i)))
-    print(league_name)
-    print(league_format)
-    print(users)
-    print(timezones)
-    print(tierlist)
+      if(req.get("check-coach"+str(i)) != None):
+        is_coach.append(True)
+      else:
+        is_coach.append(False)
+      if(req.get("check-admin"+str(i)) != None):
+        is_admin.append(True)
+      else:
+        is_admin.append(False)
+      # Send data to database
+      # init_league(league_name,league_format,users,timezones,is_coach,is_admin,tierlist)
     return redirect(request.url)
   return render_template('./admin/create_league.html')
 

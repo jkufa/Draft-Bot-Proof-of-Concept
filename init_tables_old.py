@@ -1,4 +1,3 @@
-from enum import unique
 from sqlalchemy import create_engine, Table, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relation, relationship
@@ -12,8 +11,8 @@ teams_matches = Table('teams_matches', Base.metadata,
 )
 
 draftlist_pokemon = Table('draftlist_pokemon', Base.metadata,
-    Column('league_id', Integer, ForeignKey('league.id')),
-    Column('pokemon_name', Integer, ForeignKey('pokemon.name'))
+    Column('draftlist_id', Integer, ForeignKey('draftlist.id')),
+    Column('pokemon_name', String, ForeignKey('pokemon.name'))
 )
 
 class League(Base):
@@ -50,23 +49,25 @@ class Pokemon(Base):
     name = Column('name', String, primary_key=True)
     url = Column('url', String, unique=True)
     # PokemonTeam relationship
-    team_id = Column('team_id', Integer, ForeignKey('team.id'))
-    team = relationship("Team", back_populates="pokemon")
+    # team_id = Column('team_id', Integer, ForeignKey('team.id'))
+    # team = relationship("Team", back_populates="pokemon")
     #DraftList
-    draftlist = relationship("DraftList",secondary='draftlist_pokemon',back_populates='pokemon')
+    draftlists = relationship("League",secondary='draftlist_pokemon',back_populates='pokemons')
 
 
 class DraftList(Base):
     __tablename__ = "draftlist"
     id = Column('id',Integer,primary_key=True)
-    value = Column('value',Integer)
-    is_drafted = Column('is_drafted',Boolean)
+    pkmn_value = Column('value',Integer)
+    # Team (is drafted)
+    team_id = Column('team_id', Integer, ForeignKey('team.id'))
+    team = relationship("Team", back_populates="draftlists")
     # League
     league_id = Column('league_id', Integer, ForeignKey('league.id'))
     league = relationship("League", back_populates = "draftlist")
     # Pokemon
-    pokemon_name= Column('pokemon_name', String, ForeignKey('pokemon.name'), unique=True)
-    pokemon = relationship("Pokemon",secondary="draftlist_pokemon",back_populates="draftlist")
+    pkmn_name= Column('pokemon_name', String, ForeignKey('pokemon.name'), unique=True)
+    pokemons = relationship("Pokemon",secondary="draftlist_pokemon",back_populates="draftlists")
 
 class Team(Base):
     __tablename__ = "team"
@@ -77,8 +78,8 @@ class Team(Base):
     # TeamCoach relationship
     coach_username = Column('coach_username',String, ForeignKey('coach.discord_username'))
     coach = relationship("Coach", uselist=False, back_populates="coach")
-    # PokemonTeam relationship
-    pokemon = relationship("Pokemon", back_populates="team")
+    # draftlist_team relationship
+    draftlist = relationship("DraftList", back_populates="team")
     # MatchTeam relationship
     matches = relationship("Match",secondary="teams_matches",back_populates="teams")
 
