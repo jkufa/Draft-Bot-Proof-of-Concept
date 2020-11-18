@@ -1,7 +1,7 @@
 import csv
 from sqlalchemy import create_engine, Table, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relation, relationship
+from sqlalchemy.orm import backref, relation, relationship
 from sqlalchemy.sql.sqltypes import Boolean
 from sqlalchemy.orm import sessionmaker
 
@@ -14,10 +14,20 @@ class DraftListPokemon(Base):
   pkmn_name = Column('pkmn_name', String, ForeignKey('pokemon.name'), primary_key=True)
   pkmn_value = Column('pkmn_value', String(10))
 
-class Schedule(Base): #TeamsMatches relationship
-  __tablename__ = "schedule"
-  match_id = Column('match_id', Integer, ForeignKey('match.id'), primary_key=True)
+class TeamMatch(Base):
+  __tablename__ = "team_match"
   team_id = Column('team_id', Integer, ForeignKey('team.id'), primary_key=True)
+  match_id = Column('match_id', Integer, ForeignKey('match.id'), primary_key=True)
+
+class MatchSchedule(Base): #LeagueMatches relationship
+  __tablename__ = "match_schedule"
+  id = Column('id', Integer, primary_key=True)
+  # 1 League Many MatchesScheduled
+  league_id = Column('league_id', Integer, ForeignKey('league.id'))
+  league = relationship('League', back_populates='matches_scheduled')
+  # Many Matches 1 MatchScheduled 
+  # matches = relationship('Match', back_populates="match_schedule")
+  matches = relationship('Match', backref="match_schedule")
   week_no = Column('week_no', Integer)
 
 class DraftList(Base):
@@ -25,7 +35,6 @@ class DraftList(Base):
     id = Column('id', Integer, primary_key=True)
     name = Column('name', String, unique=True)
     pokemons = relationship("Pokemon", secondary="draftlist_pokemon")
-    # pokemons = relationship("Pokemon", secondary="draftlist_pokemon", back_populates="draftlists")
 
 class Pokemon(Base):
     __tablename__ = "pokemon"
@@ -33,14 +42,16 @@ class Pokemon(Base):
     url = Column('url', String(60))
      # M:N, Pokemon to DraftList
     draftlists = relationship("DraftList", secondary="draftlist_pokemon")
-    # draftlists = relationship("DraftList", secondary="draftlist_pokemon", back_populates="pokemons")
 
 class League(Base):
     __tablename__ = "league"
     id = Column('id', Integer, primary_key=True)
     name = Column('name', String(256), unique=True)
     format =  Column('format', String(20))
-    users = relationship("User", back_populates="league")
+    users = relationship("User")
+    # users = relationship("User", back_populates="league")
+    matches_scheduled = relationship("MatchSchedule", back_populates='league')
+
   
 class User(Base):
   __tablename__ = "user"
@@ -48,7 +59,7 @@ class User(Base):
   timezone = Column('timezone', String(6))
   # UserLeague relationship
   league_id = Column('league_id', Integer, ForeignKey('league.id'))
-  league = relationship("League", back_populates = "users")
+  # league = relationship("League", back_populates = "users")
 
 class Administrator(User):
   __tablename__ = "administrator"
@@ -67,20 +78,24 @@ class Team(Base):
   name = Column('name', String(80), unique=True)
   differential = Column('differential', Integer)
   # TeamCoach relationship
-  coach_username = Column('coach_username',String, ForeignKey('coach.discord_username'))
-  coach = relationship("Coach", uselist=False, back_populates="team")
-  # League relationship
+  coach_username = Column('coach_username', String, ForeignKey('coach.discord_username'))
+  coach = relationship("Coach", back_populates="team")
+  # TeamMatch relationship
+  matches = relationship("Match", secondary="team_match")
+
 
 class Match(Base):
   __tablename__ = "match"
   id = Column('id', Integer, primary_key=True)
-  week_no = Column('week_no', Integer)
+  # Many matches in one MatchSchedule
+  mschedule_id= Column('mschedule_no', Integer, ForeignKey('match_schedule.id'))
+  # mschedule = relationship("MatchSchedule", back_populates="matches")
   differential = Column('differential', Integer)
   url = Column('url', String(60))
   winner = Column('winner', String(80), unique=True)
   loser = Column('loser', String(80), unique=True)
-  # League Relationship
-  
+  # TeamMatch Relationship
+  teams = relationship("Team", secondary="team_match")
   
 
 engine = create_engine('sqlite:///pokemon_draft_league.db',echo=True)

@@ -1,14 +1,10 @@
 .admin {
-  margin-left: 10rem;  
-  margin-right: 10rem;  
+  padding-left: 10rem;  
+  padding-right: 10rem;  
 }
 
 .admin .create-league {
   padding-bottom: 2rem;
-}
-
-.input1 {
-  width:30rem;
 }
 
 .btn {
@@ -18,7 +14,7 @@
 }
 
 .btn:hover{
-  background-color: var(--quaternary-color);
+  background-color: var(--primary-color);
 }
 
 .users h1 {
@@ -31,25 +27,13 @@
   padding-top: .4rem;
 }
 
-/* .add-user-btn {
-  background-color: var(--tertiary-color);
-  float: left;
-  display: inline-block;
-} */
-
-.add-user-btn {
-  /* position: absolute; */
-  left: 2rem;
-}
 
 .create-tierlist {
   padding-bottom: 2rem;
-  padding-top: 5rem;
+  padding-top: 3rem;
 }
 
 .submit-league {
-  margin-left: 50%;
-  margin-right: 50%;
   font: normal 500 30px/50px "Work Sans";
   width: 18rem;
 }
