@@ -1,10 +1,11 @@
 import csv
-from sqlalchemy import create_engine, Table, Column, Integer, String, ForeignKey
+import os
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from init_db import *
+from tables import Base,DraftListPokemon,DraftList,Pokemon
 
-
-engine = create_engine('sqlite:///pokemon_draft_league.db')
+file_path = os.path.abspath(os.getcwd())+"/db/"
+engine = create_engine('sqlite:///'+file_path+"/pokemon_draft_league.db")
 Base.metadata.create_all(engine)
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
@@ -23,7 +24,7 @@ def get_url(pokemon):
 
 def add_initial_draftlist():
   rows = []
-  with open("ywnb_2.csv","r") as csv_file:
+  with open(file_path+"tierlists/ywnb_2.csv","r") as csv_file:
     data = csv.reader(csv_file, delimiter=',')
     tiers = next(data)
     for row in data:
@@ -63,7 +64,7 @@ def check_duplicates(pokemons):
 # add pokemon to db
 def add_pkmn():
     # INITIALIZE DATA #
-    f= open("gen8.txt","r")
+    f= open(file_path+"gen8.txt","r")
     data = f.read()
     pokemons = data.split(', ')
     for pokemon in pokemons:
@@ -80,7 +81,4 @@ session.add(DraftList(name="YWNB Season 2"))
 session.commit()
 
 # Add Pokemon to draftlist
-f = open("ywnb_2.csv","r")
-data = f.read()
 add_initial_draftlist()
-f.close()

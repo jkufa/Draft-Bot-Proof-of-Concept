@@ -1,8 +1,11 @@
+import os
 from flask import Flask, render_template, request, redirect
-# from web_app.py.queries import init_league
+from .py.queries import Insert
 
+file_path = os.path.abspath(os.getcwd())+"/web_app/py/files/pokemon_draft_league.db"
 app = Flask(__name__)
 app.debug=True
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+ file_path
 
 @app.route('/')
 def index():
@@ -23,8 +26,9 @@ def contact():
 @app.route('/create_league', methods=["GET", "POST"])
 def create_league():
   if request.method == "POST":
-    # POST variables
+    ins = Insert(file_path)
     req = request.form
+    # POST variables
     league_name = req.get("leaguename")
     league_format = req.get("format")
     user_num = int(req.get("create_league"))+1 # get num of users
@@ -44,8 +48,10 @@ def create_league():
         is_admin.append(True)
       else:
         is_admin.append(False)
-      # Send data to database
-      # init_league(league_name,league_format,users,timezones,is_coach,is_admin,tierlist)
+    # Send data to database
+    print(users, timezones, is_coach, is_admin)
+    ins.init_league(league_name, league_format, tierlist)
+    ins.init_users(users,timezones,is_coach,is_admin,league_name)
     return redirect(request.url)
   return render_template('./admin/create_league.html')
 
