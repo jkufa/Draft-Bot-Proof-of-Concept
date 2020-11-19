@@ -4,7 +4,6 @@ from db.py.tables import DraftList,League,User,Administrator,Coach
 from sqlalchemy.ext.declarative import declarative_base
 # from flask_sqlalchemy import SQLAlchemy
 
-
 Base = declarative_base()
 
 def test_func():
@@ -24,13 +23,13 @@ class Insert:
     session = DBSession()
     # db = SQLAlchemy(app)
 
-  def init_league(self, lname, lformat, tierlist):
+  def ins_league(self, lname, lformat, tierlist):
     tierlist = session.query(DraftList).filter_by(name=tierlist).first()
     league = League(name=lname,format=lformat,dlist_id=tierlist.id)
     session.add(league)
     session.commit()
 
-  def init_users(self, users, timezones, is_coach, is_admin, lname):
+  def ins_users(self, users, timezones, is_coach, is_admin, lname):
     league = session.query(League).filter_by(name=lname).first()
     for i in range(0,len(users)):
       usr=users[i]

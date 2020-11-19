@@ -1,17 +1,28 @@
 import discord
 import json
 
+from sqlalchemy.sql.dml import Update
+import os
+from queries import Query
+
+file_path = os.path.abspath(os.getcwd())+"/bot/"
+
 # load in JSON files
-with open('bot-token.json','r') as myfile:
+with open(file_path+'bot-token.json','r') as myfile:
   data = myfile.read()
 token_data = json.loads(data)
-with open('config.json','r') as myfile:
+with open(file_path+'/config.json','r') as myfile:
   data = myfile.read()
 config_data = json.loads(data)
 
 client = discord.Client()
 token = token_data['token']
 prefix  = config_data['prefix']
+
+# Load custom queries
+file_path = os.path.abspath(os.getcwd())+"/db/pokemon_draft_league.db"
+print(file_path)
+q = Query(file_path)
 
 @client.event
 async def on_ready():
@@ -31,17 +42,24 @@ async def on_message(message):
   if(message.content.startswith(prefix)):
     args = message.content[1:].split(' ')
     if(args[0] == ''):
-      await message.channel.send("ERROR: No command was given!")
+      await message.channel.send("Error: No command was given!")
       return
     command = args.pop(0) # Pop first index, it will always be the command
-
     #See what command was given
     if(command.lower() == "select"):
       if(not args):
-        await message.channel.send("ERROR: you're missing parameters. Type !help for more info")
+        await message.channel.send("Error: you're missing parameters. Type !help for more info")
         return
-      await message.channel.send("TODO: !" + command.lower())
-      await message.channel.send(args[0])
+      await message.channel.send(q.select_pokemon(str(args[0])))
+    elif(command.lower() == "update"):
+      if(not args):
+        await message.channel.send("Error: you're missing parameters. Type !help for more info")
+        return
+      if(args[0] == "showdown"):
+        if(q.register_showdown_user(str(message.author), str(args[1]))):
+          await message.channel.send("Registered Showdown Username " + args[1] +  " successfully!")
+        else:
+          await message.channel.send("Error: You are not a registered league user!")
     elif(command.lower() == "submit"):
       await message.channel.send("TODO: !" + command.lower())
     elif(command.lower() == "redraft"):
@@ -59,7 +77,7 @@ async def on_message(message):
     elif(command.lower() == "average" or command.lower() == "avg"):
       await message.channel.send("TODO: !" + command.lower())
     else:
-      await message.channel.send("ERROR: that's not a valid command!")
+      await message.channel.send("Error: that's not a valid command!")
 
 
 client.run(token)

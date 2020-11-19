@@ -1,9 +1,4 @@
-.home {
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  height: 100%;
-}
+
 
 .home img:hover {
   transition: all 1s ease .2s;
