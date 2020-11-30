@@ -3,7 +3,17 @@
 {% block body %}
 <main class="contact">
   <section class="section1">
-    <h1>Manage Leagues</h1>
+    <form action="#" method="POST">
+      <div class="form-group">
+      <label>Select League</label></br>
+      <select clas="form-control" id="format" name="format" placeholder="Select a league" required>
+      <option value="" selected disabled>Leagues</option>
+      {% for lg in lg_names %}
+        <option>{{ lg }}</option>
+      {% endfor %}
+    </select>
+    </div>
+    </form>
   </section>
 </main>
 {% endblock %}
