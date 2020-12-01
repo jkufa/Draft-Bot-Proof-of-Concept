@@ -9,7 +9,7 @@ Base = declarative_base()
 def test_func():
   print("test.py accessed")
 
-class Insert:
+class Query:
   # def __init__(self,file_path,app):
   def __init__(self,file_path):
     file_path =  file_path
@@ -44,3 +44,7 @@ class Insert:
         admin = Administrator(username=users[i])
         session.add(admin)
       session.commit()
+    
+  def select_leagues(self):
+    lgs = session.query(League).all()
+    return lgs
