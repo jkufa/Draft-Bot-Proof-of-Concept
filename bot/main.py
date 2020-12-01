@@ -21,7 +21,6 @@ prefix  = config_data['prefix']
 
 # Load custom queries
 file_path = os.path.abspath(os.getcwd())+"/db/pokemon_draft_league.db"
-print(file_path)
 q = Query(file_path)
 
 @client.event
@@ -35,9 +34,6 @@ async def on_message(message):
     return
   if(config_data["adminrole"].lower() in [y.name.lower() for y in message.author.roles]):
       await message.channel.send("User has role " + config_data["adminrole"])
-  else:
-      print(message.author.roles)
-      print(config_data["adminrole"])
   # See if command is being run
   if(message.content.startswith(prefix)):
     args = message.content[1:].split(' ')
@@ -47,6 +43,20 @@ async def on_message(message):
     command = args.pop(0) # Pop first index, it will always be the command
     #See what command was given
     if(command.lower() == "select"):
+      await message.channel.send("TODO: !" + command.lower())
+    elif(command.lower() == "submit"):
+      await message.channel.send(q.submit_replay(str(args[0])))
+    elif(command.lower() == "redraft"):
+      await message.channel.send("TODO: !" + command.lower())
+    elif(command.lower() == "delete"):
+      await message.channel.send("TODO: !" + command.lower())
+    elif(command.lower() == "userinfo"):
+      await message.channel.send("TODO: !" + command.lower())
+    elif(command.lower() == "rankings"):
+      await message.channel.send("TODO: !" + command.lower())
+    elif(command.lower() == "matchesplayed"):
+      await message.channel.send("TODO: !" + command.lower())
+    elif(command.lower() == "pokemon"):
       if(not args):
         await message.channel.send("Error: you're missing parameters. Type !help for more info")
         return
@@ -60,19 +70,6 @@ async def on_message(message):
           await message.channel.send("Registered Showdown Username " + args[1] +  " successfully!")
         else:
           await message.channel.send("Error: You are not a registered league user!")
-    elif(command.lower() == "submit"):
-      await message.channel.send("TODO: !" + command.lower())
-    elif(command.lower() == "redraft"):
-      await message.channel.send("TODO: !" + command.lower())
-    elif(command.lower() == "delete"):
-      await message.channel.send("TODO: !" + command.lower())
-    elif(command.lower() == "userinfo"):
-      await message.channel.send("TODO: !" + command.lower())
-    elif(command.lower() == "rankings"):
-      await message.channel.send("TODO: !" + command.lower())
-    elif(command.lower() == "matchesplayed"):
-      await message.channel.send("TODO: !" + command.lower())
-    elif(command.lower() == "pokemon"):
       await message.channel.send("TODO: !" + command.lower())
     elif(command.lower() == "average" or command.lower() == "avg"):
       await message.channel.send("TODO: !" + command.lower())
