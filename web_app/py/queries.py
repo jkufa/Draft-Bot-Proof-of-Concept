@@ -1,7 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from db.py.tables import DraftList,League,User,Administrator,Coach
+from db.py.tables import DraftList,League, Match, MatchSchedule, Team, TeamMatch,User,Administrator,Coach
 from sqlalchemy.ext.declarative import declarative_base
+import random
 # from flask_sqlalchemy import SQLAlchemy
 
 Base = declarative_base()
@@ -48,3 +49,37 @@ class Query:
   def select_leagues(self):
     lgs = session.query(League).all()
     return lgs
+
+  def gen_round_robin(self,lname,teams):
+    random.shuffle(teams)
+    if len(teams) % 2 != 0:
+      teams.append("BYE")
+    week_no = 0
+    matches = [] # in case unbound
+    for i in range(0,len(teams)-1):
+      matches = []
+      for i in range(0,len(teams)//2):
+        match = teams[i],teams[-(i+1)]
+        matches.append(match)
+      week_no += 1
+      self.ins_weekly_matches(lname, matches, week_no)
+      teams.insert(1, teams.pop(-1))
+    return matches
+  
+  def ins_weekly_matches(self, lname, matches, week_no):
+    for match in matches:
+      league = session.query(League).filer_by(name=lname).first() # put this in diff function for inserting
+      match_schedule = MatchSchedule(league_id=league.id,week_no=week_no)
+      session.add(match_schedule)
+      m = Match(mschedule_id=match_schedule.id)
+      session.add(m)
+      for i in range(0,len(match)):
+        team = session.query(Team).filter_by(name=match[i])
+        team_match = TeamMatch(team_id=team.id, match_id=m.id)
+        session.add(team_match)
+      session.commit()
+  
+  def init_teams(lname):
+    return None
+
+

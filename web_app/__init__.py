@@ -53,6 +53,7 @@ def create_league():
     print(users, timezones, is_coach, is_admin)
     q.ins_league(league_name, league_format, tierlist)
     q.ins_users(users,timezones,is_coach,is_admin,league_name)
+    q.gen_round_robin(league_name)
     return redirect(request.url)
   return render_template('./admin/create_league.html')
 

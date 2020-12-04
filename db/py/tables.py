@@ -1,5 +1,6 @@
+from collections import defaultdict
 import csv
-from sqlalchemy import create_engine, Table, Column, Integer, String, ForeignKey
+from sqlalchemy import create_engine, Table, Column, Integer, String, ForeignKey, CheckConstraint
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -76,8 +77,8 @@ class Coach(Base):
 class Team(Base):
   __tablename__ = "team"
   id = Column('id', Integer, primary_key=True)
-  name = Column('name', String(80), unique=True)
-  differential = Column('differential', Integer)
+  name = Column('name', String(80), CheckConstraint("name != 'BYE'"), unique=True)
+  differential = Column('differential', Integer, default=0)
   # TeamCoach relationship
   coach_username = Column('coach_username', String, ForeignKey('coach.discord_username'))
   coach = relationship("Coach", back_populates="team")
@@ -90,9 +91,10 @@ class Match(Base):
   # Many matches in one MatchSchedule
   mschedule_id= Column('mschedule_no', Integer, ForeignKey('match_schedule.id'))
   # mschedule = relationship("MatchSchedule", back_populates="matches")
-  differential = Column('differential', Integer)
+  differential = Column('differential', Integer, default=0)
   url = Column('url', String(60))
-  winner = Column('winner', String(80), unique=True)
-  loser = Column('loser', String(80), unique=True)
+  winner = Column('winner', String(80))
+  # p1 = Column('p1', String(80))
+  # p2 = Column('p2', String(80))
   # TeamMatch Relationship
   teams = relationship("Team", secondary="team_match")
