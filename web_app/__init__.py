@@ -50,10 +50,12 @@ def create_league():
       else:
         is_admin.append(False)
     # Send data to database
-    print(users, timezones, is_coach, is_admin)
+    # print(users, timezones, is_coach, is_admin)
     q.ins_league(league_name, league_format, tierlist)
     q.ins_users(users,timezones,is_coach,is_admin,league_name)
-    q.gen_round_robin(league_name)
+    q.init_teams(league_name)
+    matches = q.gen_round_robin(league_name)
+    # q.ins_weekly_matches(league_name, matches)
     return redirect(request.url)
   return render_template('./admin/create_league.html')
 
