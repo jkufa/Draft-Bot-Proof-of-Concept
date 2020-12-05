@@ -2,7 +2,7 @@ import discord
 import json
 
 from sqlalchemy.sql.dml import Update
-import os
+import os,sys
 from queries import Query
 
 file_path = os.path.abspath(os.getcwd())+"/bot/"
@@ -21,7 +21,11 @@ prefix  = config_data['prefix']
 
 # Load custom queries
 file_path = os.path.abspath(os.getcwd())+"/db/pokemon_draft_league.db"
-q = Query(file_path)
+if len(sys.argv) <= 1:
+  lname = input("enter league name to run bot for: ")
+else:
+  lname = sys.argv[1]
+q = Query(file_path,lname)
 
 @client.event
 async def on_ready():

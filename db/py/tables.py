@@ -78,7 +78,7 @@ class Team(Base):
   __tablename__ = "team"
   id = Column('id', Integer, primary_key=True)
   league_id = Column('league_id', Integer, ForeignKey('league.id'))
-  name = Column('name', String(80), CheckConstraint("name != 'BYE'"), unique=True)
+  name = Column('name', String(80), CheckConstraint("name != 'BYE'"),unique=True)
   differential = Column('differential', Integer, default=0)
   # TeamCoach relationship
   coach_username = Column('coach_username', String, ForeignKey('coach.discord_username'))

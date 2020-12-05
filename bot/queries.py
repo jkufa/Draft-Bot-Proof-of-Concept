@@ -1,15 +1,15 @@
 from sqlalchemy import create_engine, func
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import query_expression, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import sys,os,json,requests
-sys.path.insert(1, os.path.abspath(os.getcwd())+"/db/py/")
-from tables import DraftList,League,User,Administrator,Coach,Pokemon
+sys.path.insert(1, os.path.abspath(os.getcwd())+"/db/py")
+from tables import DraftList,League,User,Administrator,Coach,Pokemon,Team,TeamMatch,Match
 
 Base = declarative_base()
 
 
 class Query():
-  def __init__(self,file_path):
+  def __init__(self,file_path,lname):
     file_path =  file_path
     engine = create_engine('sqlite:///'+file_path)
     Base.metadata.create_all(engine)
@@ -17,6 +17,8 @@ class Query():
     DBSession = sessionmaker(bind=engine)
     global session
     session = DBSession()
+    self.league_id = session.query(League).filter_by(name=lname).first().id
+
 
   def register_showdown_user(self,d_user, sd_user):
     try:
@@ -49,6 +51,12 @@ class Query():
         winner = log[-i].split("|")[-1]
 
     # TODO: Add db stuff, round robin stuff
+    coaches = []
+    if self.check_showdown_names([p1,p2]):
+      for p in [p1,p2]:
+        coaches.append(session.query(Coach).filter_by(showdown_username=p).first().discord_username)
+      self.query_match(coaches)
+      # valid showdown names, now find match id
 
     # I'm sorry, I really wanted to do this in one line
     return p1 + "'s team: " + str(teams[0])[1:-1].replace("'","") + "\n" + p2 +"'s team: " + str(teams[1])[1:-1].replace("'","") + "\n" + "Winner: " + winner + "\nDifferential: " + str(abs(self.calc_differential(log)))
@@ -73,5 +81,28 @@ class Query():
         elif "p2a:" in log[i]:
           diff += 1
     return diff
+  
+  def check_showdown_names(self, players):
+    for player in players:
+      coach = session.query(Coach).filter_by(showdown_username=player).first()
+      if coach.discord_username == None:
+        return False
+    return True      
+
+  def query_match(self,coaches):
+    teams = []
+    for coach in coaches:
+      team = session.query(Team).filter_by(coach_username=coach, league_id=self.league_id).first()
+      teams.append(team.id)
+    t1 = session.query(TeamMatch).filter(TeamMatch.team_id==teams[0]).all()
+    t2 = session.query(TeamMatch).filter(TeamMatch.team_id==teams[1]).all()
+    for x in t1:
+      for y in t2:
+        if x.match_id == y.match_id:
+          match = session.query(Match).filter_by(id=x.match_id).first()
+          print(match, x.match_id)
+
+  def update_match():
+    return None
 
   
