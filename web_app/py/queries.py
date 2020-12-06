@@ -66,24 +66,25 @@ class Query:
         matches.append(match)
       week_no += 1
       self.ins_weekly_matches(lname, matches, week_no)
+      print(week_no, matches)
       # self.ins_match(session.query(MatchSchedule).filter_by(id=))
       teams.insert(1, teams.pop(-1))
     return matches
   
   def ins_weekly_matches(self, lname, matches, week_no):
+    league = session.query(League).filter_by(name=lname).first()
     for match in matches:
-      league = session.query(League).filter_by(name=lname).first()
-      self.ins_match_schedule(league.id, week_no)
-      match_schedule = session.query(MatchSchedule).filter_by(week_no=week_no).all()
-      for m_s in match_schedule:
-        self.ins_match(m_s.id)
-        m = session.query(Match).filter_by(mschedule_id=m_s.id).first()
-        for i in range(0,len(match)):
-          if match[i] != "BYE":
+      if "BYE" not in match:
+        self.ins_match_schedule(league.id, week_no)
+        match_schedule = session.query(MatchSchedule).filter_by(week_no=week_no).all()
+        for m_s in match_schedule:
+          self.ins_match(m_s.id)
+          m = session.query(Match).filter_by(mschedule_id=m_s.id).first()
+          for i in range(0,len(match)):
             team = session.query(Team).filter_by(id=match[i]).first()
             team_match = TeamMatch(team_id=team.id, match_id=m.id)
             session.add(team_match)
-          session.commit()
+            session.commit()
     
   def ins_match_schedule(self, league_id, week_no):
     match_schedule = MatchSchedule(league_id=league_id,week_no=week_no)

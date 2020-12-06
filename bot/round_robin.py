@@ -1,4 +1,4 @@
-from itertools import combinations 
+from itertools import combinations, count 
 import numpy as np
 import random
 
@@ -17,9 +17,8 @@ pairings = list(combinations(teams,2))
 # week1 = pairings[::len(teams)]
 # print(*week1)
 
-print(teams)
+counter = 0
 random.shuffle(teams)
-print(teams)
 if len(teams) % 2 != 0:
   teams.append("BYE")
 week_no = 0
@@ -30,5 +29,9 @@ for i in range(0,len(teams)-1):
     matches.append(match)
   week_no += 1
   for m in matches:
-    print(m[0], m[1])
+    print(m[0],' vs. ', m[1])
+    if 'BYE' not in m:
+      counter += 1
   teams.insert(1, teams.pop(-1))
+
+  print(counter)
