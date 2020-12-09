@@ -1,3 +1,4 @@
+import discord
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import query_expression, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -121,30 +122,32 @@ class Query():
     session.commit()
     print(team)
 
-  def query_team(self, discord_username):
+  def query_coach(self, discord_username):
     coach = session.query(Coach).filter_by(discord_username=discord_username).first()
+    return coach
+
+  def query_team(self, discord_username):
+    coach = self.query_coach(discord_username)
     team = session.query(Team).filter_by(coach_username=coach.discord_username).first()
     return team
-
   
   def add_pokemon_to_team(self,username,pokemon_name):
     team = self.query_team(username)
-    print(team.id)
-    pokemon = session.query(Pokemon).filter_by(name=pokemon_name).first()
+    pokemon = session.query(Pokemon).filter_by(name=pokemon_name.capitalize()).first()
     if pokemon != None:
-      pokemon_team = PokemonTeam(pkmn_name=pokemon_name, team_id = team.id)
+      pokemon_team = PokemonTeam(pkmn_name=pokemon.name, team_id = team.id)
       try: 
         session.add(pokemon_team)
       except:
         return("Error adding Pokemon. Perhaps it's already on your team?")
       session.commit()
-      return (str(pokemon_name) + " added to team " + str(team.name))
+      return (str(pokemon.name) + " added to team " + str(team.name))
     return ("Error. This Pokemon does not exist!")
   
   def replace_pokemon_on_team(self,username,curr_mon_name,new_mon_name):
     team = self.query_team(username)
-    curr_mon = session.query(Pokemon).filter_by(name=curr_mon_name).first()
-    new_mon = session.query(Pokemon).filter_by(name=new_mon_name).first()
+    curr_mon = session.query(Pokemon).filter_by(name=curr_mon_name.capitalize()).first()
+    new_mon = session.query(Pokemon).filter_by(name=new_mon_name.capitalize()).first()
     if curr_mon != None and new_mon != None:
       pokemon_team = session.query(PokemonTeam).filter_by(pkmn_name=curr_mon.name, team_id=team.id).first()
       if pokemon_team != None:
@@ -152,8 +155,39 @@ class Query():
         session.commit()
         return("Success! Replaced " + str(curr_mon.name) + " with " + str(new_mon.name))
     return("Error: One of the pokemon you submitted is invalid.")
-    
-
+  
+  def is_admin(self,discord_username):
+    admin = session.query(Administrator).filter_by(username=discord_username).first()
+    if(admin != None):
+      return True
+    return False
+  
+  def rankings(self):
+    teams = session.query(Team).filter_by(league_id=self.league_id).order_by(Team.differential).all()
+    out = "Rankings:\n"
+    i = 1
+    for team in teams:
+      out = out + str(i) +  ": " + str(team.name) + "\n"
+      i += 1
+    return out
+  
+  def user_info(self,discord_username):
+    print(discord_username)
+    d = session.query(User).filter(User.username.contains(discord_username)).first()
+    c = self.query_coach(d.username)
+    t = self.query_team(d.username)
+    pkmn = session.query(Pokemon).join(PokemonTeam).filter_by(team_id=t.id).all()
+    out = ("**"+ str(c.discord_username) + "'s Info**\nShowdown Username: " + str(c.showdown_username) 
+    + "\nTeam: " + str(t.name) + "\nDifferential: " + str(t.differential) + "\nPokemon: ")
+    for mon in pkmn:
+      out = out + str(mon.name) + ", "
+    return out[0:-2]
+  
+  def register_showdown(self,discord_username,sd_username):
+    c = self.query_coach(discord_username)
+    c.showdown_username = sd_username
+    session.commit()
+    return "Registered showdown username " + sd_username
 
 
 

@@ -18,16 +18,12 @@ class TeamMatch(Base):
   team_id = Column('team_id', Integer, ForeignKey('team.id'), primary_key=True)
   match_id = Column('match_id', Integer, ForeignKey('match.id'), primary_key=True)
 
-class MatchSchedule(Base): #LeagueMatches relationship
-  __tablename__ = "match_schedule"
-  id = Column('id', Integer, primary_key=True)
+class MatchLeague(Base): #LeagueMatches relationship
+  __tablename__ = "match_league"
+  match_id = Column('id', Integer, ForeignKey('match.id'), primary_key=True)
   # 1 League Many MatchesScheduled
-  league_id = Column('league_id', Integer, ForeignKey('league.id'))
+  league_id = Column('league_id', Integer, ForeignKey('league.id'),primary_key=True)
   league = relationship('League', back_populates='matches_scheduled')
-  # Many Matches 1 MatchScheduled 
-  # matches = relationship('Match', back_populates="match_schedule")
-  matches = relationship('Match', backref="match_schedule")
-  week_no = Column('week_no', Integer)
 
 class PokemonTeam(Base):
   __tablename__ = "pokemon_team"
@@ -58,7 +54,7 @@ class League(Base):
     # dlist = relationship('DraftList', back_populates='leagues')
     users = relationship("User")
     # users = relationship("User", back_populates="league")
-    matches_scheduled = relationship("MatchSchedule", back_populates='league')
+    matches_scheduled = relationship("MatchLeague", back_populates='league')
   
 class User(Base):
   __tablename__ = "user"
@@ -95,7 +91,7 @@ class Match(Base):
   __tablename__ = "match"
   id = Column('id', Integer, primary_key=True)
   # Many matches in one MatchSchedule
-  mschedule_id= Column('mschedule_no', Integer, ForeignKey('match_schedule.id'))
+  week_no = Column('week_no', Integer)
   # mschedule = relationship("MatchSchedule", back_populates="matches")
   differential = Column('differential', Integer, default=0)
   url = Column('url', String(60))

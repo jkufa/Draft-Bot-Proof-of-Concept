@@ -1,5 +1,5 @@
-import csv
-import os
+import os,csv,requests
+from time import sleep
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from tables import Base,DraftListPokemon,DraftList,Pokemon
@@ -10,6 +10,8 @@ Base.metadata.create_all(engine)
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
+
+debug = False
 
 def get_url(pokemon):
   # Pokemon with hypen in name that don't need to be split
@@ -66,9 +68,18 @@ def add_pkmn():
     # INITIALIZE DATA #
     f= open(file_path+"gen8.txt","r")
     data = f.read()
-    pokemons = data.split(', ')
+    pokemons = data.split(',')
     for pokemon in pokemons:
-        url = get_url(pokemon)
+      url = get_url(pokemon)
+      if debug:
+        rq = requests.get(url)
+        sleep(.5)
+        txt = rq.text
+        if txt[txt.find('<title>')+7 : txt.find('</title>')] == "404 Error":
+          print(pokemon)
+        else:
+          session.add(Pokemon(name=pokemon, url=url))
+      else:
         session.add(Pokemon(name=pokemon, url=url))
     f.close()
 

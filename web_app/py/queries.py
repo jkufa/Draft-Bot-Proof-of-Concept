@@ -1,7 +1,7 @@
 from inspect import getsource
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from db.py.tables import DraftList,League, Match, MatchSchedule, Team, TeamMatch,User,Administrator,Coach
+from db.py.tables import DraftList,League, Match, MatchLeague, Team, TeamMatch,User,Administrator,Coach
 from sqlalchemy.ext.declarative import declarative_base
 import random
 # from flask_sqlalchemy import SQLAlchemy
@@ -57,16 +57,15 @@ class Query:
     random.shuffle(teams)
     if len(teams) % 2 != 0:
       teams.append("BYE")
-    week_no = 0
+    week_no = 1
     matches = [] # in case unbound
     for i in range(0,len(teams)-1):
       matches = []
       for i in range(0,len(teams)//2):
         match = teams[i],teams[-(i+1)]
         matches.append(match)
-      week_no += 1
       self.ins_weekly_matches(lname, matches, week_no)
-      print(week_no, matches)
+      week_no += 1
       # self.ins_match(session.query(MatchSchedule).filter_by(id=))
       teams.insert(1, teams.pop(-1))
     return matches
@@ -74,28 +73,31 @@ class Query:
   def ins_weekly_matches(self, lname, matches, week_no):
     league = session.query(League).filter_by(name=lname).first()
     for match in matches:
+      print(match)
       if "BYE" not in match:
-        self.ins_match_schedule(league.id, week_no)
-        match_schedule = session.query(MatchSchedule).filter_by(week_no=week_no).all()
-        for m_s in match_schedule:
-          self.ins_match(m_s.id)
-          m = session.query(Match).filter_by(mschedule_id=m_s.id).first()
-          for i in range(0,len(match)):
-            team = session.query(Team).filter_by(id=match[i]).first()
-            team_match = TeamMatch(team_id=team.id, match_id=m.id)
-            session.add(team_match)
-            session.commit()
+        m = self.ins_match(week_no)
+        ml = self.ins_match_league(league.id,m.id)
+        for i in range(0,len(match)):
+          team = session.query(Team).filter_by(id=match[i]).first()
+          t = self.ins_team_match(team.id, m.id)
     
-  def ins_match_schedule(self, league_id, week_no):
-    match_schedule = MatchSchedule(league_id=league_id,week_no=week_no)
-    session.add(match_schedule)
+  def ins_team_match(self, team_id, match_id):
+    team_match = TeamMatch(team_id=team_id, match_id=match_id)
+    session.add(team_match)
     session.commit()
-    return match_schedule
+    return team_match
 
-  def ins_match(self, m_s_id):
-    m = Match(mschedule_id=m_s_id)
+  def ins_match_league(self, league_id, match_id):
+    match_league = MatchLeague(league_id=league_id,match_id=match_id)
+    session.add(match_league)
+    session.commit()
+    return match_league
+
+  def ins_match(self, week_no):
+    m = Match(week_no=week_no)
     session.add(m)
     session.commit()
+    return m
 
   # TODO: add function that inserts teams into database so gen_round_robin can run
   def init_teams(self, lname):
@@ -104,7 +106,8 @@ class Query:
     for user in users:
       # print(user.username)
       coach = session.query(Coach).filter_by(discord_username=user.username).first()
-      team = Team(league_id=league.id,coach_username=coach.discord_username)
+      team_name = str(coach.discord_username).split('#')[0] + "'s Team"
+      team = Team(league_id=league.id,coach_username=coach.discord_username,name=team_name)
       session.add(team)
     session.commit()
   

@@ -27,6 +27,10 @@ else:
   lname = sys.argv[1]
 q = Query(file_path,lname)
 
+# global vars
+can_redraft = False
+can_draft = False
+
 @client.event
 async def on_ready():
   print('Logged in as {0.user}'.format(client))
@@ -46,18 +50,41 @@ async def on_message(message):
       return
     command = args.pop(0) # Pop first index, it will always be the command
     #See what command was given
-    if(command.lower() == "select"):
-      await message.channel.send(q.add_pokemon_to_team(str(message.author), str(args[0])))
+    if(command.lower() == "draft"):
+      global can_draft
+      if(len(args) == 1):
+        if(can_draft):
+          await message.channel.send(q.add_pokemon_to_team(str(message.author), str(args[0])))
+        else:
+          await message.channel.send("You cannot draft at this time!")
+      elif(q.is_admin(str(message.author))):
+        can_draft = not can_draft
+        await message.channel.send("Drafting set to " + str(can_draft).lower())
     elif(command.lower() == "submit"):
       await message.channel.send(q.submit_replay(str(args[0])))
-    elif(command.lower() == "redraft" and len(args) == 2):
-      await message.channel.send(q.replace_pokemon_on_team(str(message.author), str(args[0]),  str(args[1])))
-    elif(command.lower() == "delete"):
-      await message.channel.send("TODO: !" + command.lower())
+    elif(command.lower() == "redraft"):
+      global can_redraft
+      if(len(args) == 2):
+        if(can_redraft):
+          await message.channel.send(q.replace_pokemon_on_team(str(message.author), str(args[0]),  str(args[1])))
+        else:
+          await message.channel.send("You cannot redraft at this time!")
+      elif(q.is_admin(str(message.author))):
+        can_redraft = not can_redraft
+        await message.channel.send("Redraft set to " + str(can_redraft).lower())
+    elif(command.lower() == "regshowdown"):
+      await message.channel.send(q.register_showdown(str(message.author),str(args[0])))
     elif(command.lower() == "userinfo"):
-      await message.channel.send("TODO: !" + command.lower())
+      if(len(args) == 0):
+        await message.channel.send(q.user_info(str(message.author)))
+      elif(len(args) > 0):
+        msg = ''
+        for arg in args:
+          msg = msg + arg + " "
+        msg = msg[0:-1]
+        await message.channel.send(q.user_info(msg))
     elif(command.lower() == "rankings"):
-      await message.channel.send("TODO: !" + command.lower())
+      await message.channel.send(q.rankings())
     elif(command.lower() == "matchesplayed"):
       await message.channel.send("TODO: !" + command.lower())
     elif(command.lower() == "pokemon"):
