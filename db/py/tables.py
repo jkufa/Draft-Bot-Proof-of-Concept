@@ -29,6 +29,11 @@ class MatchSchedule(Base): #LeagueMatches relationship
   matches = relationship('Match', backref="match_schedule")
   week_no = Column('week_no', Integer)
 
+class PokemonTeam(Base):
+  __tablename__ = "pokemon_team"
+  pkmn_name = Column('pkmn_name', String(25), ForeignKey('pokemon.name'), primary_key=True)
+  team_id = Column('team_id', Integer, ForeignKey('team.id'), primary_key=True)
+
 class DraftList(Base):
     __tablename__ = "draftlist"
     id = Column('id', Integer, primary_key=True)

@@ -47,11 +47,11 @@ async def on_message(message):
     command = args.pop(0) # Pop first index, it will always be the command
     #See what command was given
     if(command.lower() == "select"):
-      await message.channel.send("TODO: !" + command.lower())
+      await message.channel.send(q.add_pokemon_to_team(str(message.author), str(args[0])))
     elif(command.lower() == "submit"):
       await message.channel.send(q.submit_replay(str(args[0])))
-    elif(command.lower() == "redraft"):
-      await message.channel.send("TODO: !" + command.lower())
+    elif(command.lower() == "redraft" and len(args) == 2):
+      await message.channel.send(q.replace_pokemon_on_team(str(message.author), str(args[0]),  str(args[1])))
     elif(command.lower() == "delete"):
       await message.channel.send("TODO: !" + command.lower())
     elif(command.lower() == "userinfo"):

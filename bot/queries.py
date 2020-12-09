@@ -3,7 +3,7 @@ from sqlalchemy.orm import query_expression, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import sys,os,json,requests
 sys.path.insert(1, os.path.abspath(os.getcwd())+"/db/py")
-from tables import DraftList,League,User,Administrator,Coach,Pokemon,Team,TeamMatch,Match
+from tables import DraftList,League,User,Administrator,Coach,Pokemon,Team,TeamMatch,Match,PokemonTeam
 
 Base = declarative_base()
 
@@ -120,6 +120,40 @@ class Query():
       team.differential=t_diff
     session.commit()
     print(team)
+
+  def query_team(self, discord_username):
+    coach = session.query(Coach).filter_by(discord_username=discord_username).first()
+    team = session.query(Team).filter_by(coach_username=coach.discord_username).first()
+    return team
+
+  
+  def add_pokemon_to_team(self,username,pokemon_name):
+    team = self.query_team(username)
+    print(team.id)
+    pokemon = session.query(Pokemon).filter_by(name=pokemon_name).first()
+    if pokemon != None:
+      pokemon_team = PokemonTeam(pkmn_name=pokemon_name, team_id = team.id)
+      try: 
+        session.add(pokemon_team)
+      except:
+        return("Error adding Pokemon. Perhaps it's already on your team?")
+      session.commit()
+      return (str(pokemon_name) + " added to team " + str(team.name))
+    return ("Error. This Pokemon does not exist!")
+  
+  def replace_pokemon_on_team(self,username,curr_mon_name,new_mon_name):
+    team = self.query_team(username)
+    curr_mon = session.query(Pokemon).filter_by(name=curr_mon_name).first()
+    new_mon = session.query(Pokemon).filter_by(name=new_mon_name).first()
+    if curr_mon != None and new_mon != None:
+      pokemon_team = session.query(PokemonTeam).filter_by(pkmn_name=curr_mon.name, team_id=team.id).first()
+      if pokemon_team != None:
+        pokemon_team.pkmn_name = new_mon.name
+        session.commit()
+        return("Success! Replaced " + str(curr_mon.name) + " with " + str(new_mon.name))
+    return("Error: One of the pokemon you submitted is invalid.")
+    
+
 
 
 
