@@ -6,8 +6,6 @@ file_path = os.path.abspath(os.getcwd())+"/db/pokemon_draft_league.db"
 app = Flask(__name__)
 app.debug=True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+ file_path
-q = Query(file_path)
-
 
 @app.route('/')
 def index():
@@ -15,7 +13,11 @@ def index():
 
 @app.route('/view_leagues')
 def leagues():
-  return render_template('leagues.html')
+  q = Query(file_path)
+  leagues = q.fetch_leagues()
+  dlists = q.fetch_dlists()
+  dlist_pkmn = q.fetch_dlist()
+  return render_template('leagues.html',leagues=leagues,dlists=dlists,dlist_pkmn=dlist_pkmn)
 
 @app.route('/how_to_setup')
 def howto():
@@ -27,6 +29,7 @@ def contact():
 
 @app.route('/create_league', methods=["GET", "POST"])
 def create_league():
+  q = Query(file_path)
   if request.method == "POST":
     req = request.form
     # POST variables
@@ -61,12 +64,24 @@ def create_league():
 
 @app.route('/manage_leagues', methods=["GET", "POST"])
 def manage_leagues():
-  lgs = q.select_leagues()
+  q = Query(file_path)
+  lgs = q.fetch_leagues()
+  users = q.fetch_users()
   lg_names = []
   for lg in lgs:
     lg_names.append(re.sub("[(),']",'',str(lg.name)))
-  print(lg_names)
-  return render_template('./admin/manage_leagues.html', lg_names=lg_names)
+  if request.method == "POST":
+    req = request.form
+    user = req.get("del-user")
+    league = req.get("del-league")
+    if user != None:
+      print("deleting " + str(user))
+      q.del_user(user)
+    elif req != None:
+      print("delete " + str(league))
+      q.del_league(league)
+    return redirect(request.url)
+  return render_template('./admin/manage_leagues.html', lg_names=lg_names, users=users)
 
 if __name__ == '__main__':
   app.run()

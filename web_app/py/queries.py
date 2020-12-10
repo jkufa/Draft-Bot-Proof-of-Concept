@@ -1,7 +1,8 @@
+from csv import DictReader
 from inspect import getsource
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from db.py.tables import DraftList,League, Match, MatchLeague, Team, TeamMatch,User,Administrator,Coach
+from db.py.tables import DraftList, DraftListPokemon,League, Match, MatchLeague, Team, TeamMatch,User,Administrator,Coach
 from sqlalchemy.ext.declarative import declarative_base
 import random
 # from flask_sqlalchemy import SQLAlchemy
@@ -47,7 +48,7 @@ class Query:
         session.add(admin)
       session.commit()
     
-  def select_leagues(self):
+  def fetch_leagues(self):
     lgs = session.query(League).all()
     return lgs
 
@@ -118,5 +119,19 @@ class Query:
       ids.append(team.id)
     return ids
 
-  
+  def fetch_users(self):
+    return session.query(User).all()
 
+  def fetch_dlists(self):
+    return session.query(DraftList).all()
+
+  def fetch_dlist_pokemon(self):
+    return session.query(DraftListPokemon).all()
+
+  def del_user(self,username):
+    user = session.query(User).filter_by(username=username).delete()
+    session.commit()
+  
+  def del_league(self,lname):
+    league = session.query(League).filter_by(name=lname).delete()
+    session.commit()

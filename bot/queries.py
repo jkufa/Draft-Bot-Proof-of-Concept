@@ -4,7 +4,7 @@ from sqlalchemy.orm import query_expression, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import sys,os,json,requests
 sys.path.insert(1, os.path.abspath(os.getcwd())+"/db/py")
-from tables import DraftList,League,User,Administrator,Coach,Pokemon,Team,TeamMatch,Match,PokemonTeam
+from tables import DraftList,League,User,Administrator,Coach,Pokemon,Team,TeamMatch,Match,PokemonTeam,DraftListPokemon
 
 Base = declarative_base()
 
@@ -18,8 +18,7 @@ class Query():
     DBSession = sessionmaker(bind=engine)
     global session
     session = DBSession()
-    self.league_id = session.query(League).filter_by(name=lname).first().id
-
+    self.league = session.query(League).filter_by(name=lname).first()
 
   def register_showdown_user(self,d_user, sd_user):
     try:
@@ -133,7 +132,7 @@ class Query():
   
   def add_pokemon_to_team(self,username,pokemon_name):
     team = self.query_team(username)
-    pokemon = session.query(Pokemon).filter_by(name=pokemon_name.capitalize()).first()
+    pokemon = session.query(DraftListPokemon).filter_by(dlist_id=self.league.dlist_id,name=pokemon_name.capitalize()).first()
     if pokemon != None:
       pokemon_team = PokemonTeam(pkmn_name=pokemon.name, team_id = team.id)
       try: 
@@ -163,7 +162,7 @@ class Query():
     return False
   
   def rankings(self):
-    teams = session.query(Team).filter_by(league_id=self.league_id).order_by(Team.differential).all()
+    teams = session.query(Team).filter_by(league_id=self.league.id).order_by(Team.differential).all()
     out = "Rankings:\n"
     i = 1
     for team in teams:

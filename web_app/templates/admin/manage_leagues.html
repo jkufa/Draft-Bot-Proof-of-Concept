@@ -3,16 +3,35 @@
 {% block body %}
 <main class="contact">
   <section class="section1">
+    <h1>Destroy a League</h1> 
     <form action="#" method="POST">
       <div class="form-group">
       <label>Select League</label></br>
-      <select clas="form-control" id="format" name="format" placeholder="Select a league" required>
+      <select class="form-control" id="del-league" name="del-league" placeholder="Select a league" required>
       <option value="" selected disabled>Leagues</option>
       {% for lg in lg_names %}
         <option>{{ lg }}</option>
       {% endfor %}
     </select>
     </div>
+    <center><button name="create_league" type="submit" class="btn submit-league" id="submit" value="0">NUKE</button></center>
+    </form>
+    <h1>Remove a User</h1> 
+    <form action="#" method="POST">
+      <div class="form-group">
+        {% for lg in lg_names %}
+        <h2>Users in {{ lg }}</h2>
+        <label>Select User</label></br>
+        <select class="form-control" id="del-user" name="format" placeholder="Select a user" required>
+        <option value="" selected disabled>Users</option>
+        {% for user in users %}
+          {& if user.league_id==1 %}
+            <option>{{ user.username }}</option>
+        {% endfor %}
+      {% endfor %}
+    </select>
+    </div>
+    <center><button name="create_league" type="submit" class="btn submit-league" id="submit" value="0">Remove User</button></center>
     </form>
   </section>
 </main>

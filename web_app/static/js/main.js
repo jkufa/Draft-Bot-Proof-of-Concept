@@ -6,6 +6,10 @@ $(document).ready(function() {
     var i = 0;
     var original = document.getElementById('add-users0');
   }
+  if(window.location.pathname == "/manage_league") {
+    var lg = document.getElementById('sel-league');
+    document.getElementById('add-users0');
+  }
   function duplicate() {
       var clone = original.cloneNode(true); // "deep" clone      
       clone.id = "add-users" + ++i; // there can only be one element with an ID
