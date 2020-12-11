@@ -2,38 +2,40 @@
 {% block title %}Manage Leagues{% endblock %}
 {% block body %}
 <main class="contact">
-  <section class="section1">
-    <h1>Destroy a League</h1> 
-    <form action="#" method="POST">
-      <div class="form-group">
-      <label>Select League</label></br>
-      <select class="form-control" id="del-league" name="del-league" placeholder="Select a league" required>
-      <option value="" selected disabled>Leagues</option>
-      {% for lg in lgs %}
-        <option>{{ lg.name }}</option>
-      {% endfor %}
-    </select>
-    </div>
-    <center><button name="del-league" type="submit" class="btn submit-league" id="submit">NUKE</button></center>
-    </form>
-    <h1>Remove a User</h1> 
-    <form action="#" method="POST">
-      <div class="form-group">
-        {% for lg in lgs %}
-        <h2>Users in {{ lg.name }}</h2>
-        <label>Select User</label></br>
-        <select class="form-control" id="del-user" name="del-user" placeholder="Select a user">
-          <option value="" selected disabled>Users</option>
-          {% for user in users %}
+  <section class="create">
+    <div class="container">
+      <h1>Destroy a League</h1> 
+      <form action="#" method="POST">
+        <div class="form-group">
+          <label>Select League</label></br>
+          <select class="form-control" id="del-league" name="del-league" placeholder="Select a league" required>
+            <option value="" selected disabled>Leagues</option>
+            {% for lg in lgs %}
+            <option>{{ lg.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <center><button name="del-league" type="submit" class="btn submit-league" id="submit">NUKE</button></center>
+      </form>
+      <h1>Remove a User</h1> 
+      <form action="#" method="POST">
+        <div class="form-group">
+          {% for lg in lgs %}
+          <h2>Users in {{ lg.name }}</h2>
+          <label>Select User</label></br>
+          <select class="form-control" id="del-user" name="del-user" placeholder="Select a user">
+            <option value="" selected disabled>Users</option>
+            {% for user in users %}
             {% if user.league_id==lg.id %}
-              <option>{{ user.username }}</option>
+            <option>{{ user.username }}</option>
             {% endif %}
+            {% endfor %}
+          </select>
+          <center><button name="del-user" type="submit" class="btn submit-league" id="submit">Remove User</button></center>
           {% endfor %}
-        </select>
-        <center><button name="del-user" type="submit" class="btn submit-league" id="submit">Remove User</button></center>
-        {% endfor %}
+        </div>
+      </form>
     </div>
-    </form>
-  </section>
+    </section>
 </main>
 {% endblock %}

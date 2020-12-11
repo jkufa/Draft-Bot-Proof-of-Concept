@@ -1,29 +1,37 @@
 
+.home body {
+  z-index: -2;
+}
 
 .home img:hover {
   transition: all 1s ease .2s;
   scale: 68%;
 }
 
-.home h1 {
-  text-align: left;
-  padding: 8rem 3rem 2rem;
-  margin-right: 40%;
-  /* padding-right: 25%; */
-}
-
-.home h4 {
-  text-align: left;
-  padding: 0rem 3rem 3rem;  
-  /* padding-right: 25%; */
-  margin-right: 40%;
-}
-
 .home img {
-  object-fit: cover;
-  padding-left: 10rem;
-  padding-right: 3rem;
   scale: 70%;
   transition: all .8s ease .2s;
   filter: drop-shadow(15px 15px 0px rgba(0,0,0,0.25));
+}
+
+.col-lg.txt{
+  font: normal 500 25px/50px "Open Sans";
+  text-align: left;
+}
+
+.bg-image {
+  background-image: url('../images/route18.png');
+  filter: blur(10px);
+  opacity: .2;
+  -webkit-filter: blur(10px);
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+.home .btn {
+  height: 45px;
+  color:  var(--my-black);
 }

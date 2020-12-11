@@ -1,20 +1,20 @@
 {% extends "_base.html" %}
 {% block title %}Welcome to Drafty!{% endblock %}
 {% block body %}
-<div class="bg-image"></div>
 <main class="home">
-  <section class="title section1">
-    <div class="row">
-    <div class="col-lg-5 col-md-10">
-      <img src="../static/images/logo.svg" alt="Image failed to load"></img>
-    </div>
-    <div class="col-lg-6 col-md-12">
-      <h1><span> Pokemon Draft Leagues Made Easy.</span></h1>
-    </div>
-  </div>
-  <p>
-    Drafty is a Discord bot made for creating and managing Pokemon Draft Leagues.
-  </p>
-  </section>
+  <div class="bg-image"></div>
+  <section class="title">
+    <div class="container">
+      <h1>Pokemon Draft Leagues made simple.</h1>
+      <div class="row align-items-center">
+        <div class="col-lg img">
+          <img src="../static/images/logo.svg" alt="Image failed to load"></img>
+        </div>
+        <div class="col-lg txt">
+          Say hello to Drafty, a fully functional Discord Bot built to make your Pokemon Draft League easier to run and manage.
+        </br></br><button type="button" class="btn" onclick="window.location.href='/how_to_setup'">How to Setup</button>
+        </div>
+      </div>
+    </section>
 </main>
 {% endblock %}
