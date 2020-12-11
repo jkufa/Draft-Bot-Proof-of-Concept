@@ -1,23 +1,40 @@
-import os, re
+from db.py.tables import DraftList
+import os, re, csv
 from flask import Flask, render_template, request, redirect
 from web_app.py.queries import Query
 
-file_path = os.path.abspath(os.getcwd())+"/db/pokemon_draft_league.db"
+base_file_path = os.path.abspath(os.getcwd())
+file_path = base_file_path+"/db/pokemon_draft_league.db"
+
 app = Flask(__name__)
 app.debug=True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+ file_path
+
+def read_draftlist(csv_name):
+  rows = []
+  with open(base_file_path+"/db/tierlists/"+csv_name+".csv","r") as csv_file:
+    data = csv.reader(csv_file, delimiter=',')
+    headings = next(data)
+    for row in data:
+      rows.append(row)
+      print(row)
+  return headings,rows
 
 @app.route('/')
 def index():
   return render_template('index.html')
 
-@app.route('/view_leagues')
+@app.route('/draftlists', methods=['GET','POST'])
 def leagues():
   q = Query(file_path)
   leagues = q.fetch_leagues()
-  dlists = q.fetch_dlists()
-  dlist_pkmn = q.fetch_dlist()
-  return render_template('leagues.html',leagues=leagues,dlists=dlists,dlist_pkmn=dlist_pkmn)
+  if request.method =="POST":
+    req = request.form
+    get_lg = req.get("sel-league")
+    draftlist = q.fetch_league_dlist(get_lg)
+    tiers,rows = read_draftlist(draftlist.name.replace(' ',''))
+    return render_template('draftlists.html',leagues=leagues,tiers=tiers,rows=rows,button_pressed=True)
+  return render_template('draftlists.html',leagues=leagues,button_pressed=False)
 
 @app.route('/how_to_setup')
 def howto():
@@ -67,21 +84,18 @@ def manage_leagues():
   q = Query(file_path)
   lgs = q.fetch_leagues()
   users = q.fetch_users()
-  lg_names = []
-  for lg in lgs:
-    lg_names.append(re.sub("[(),']",'',str(lg.name)))
   if request.method == "POST":
     req = request.form
     user = req.get("del-user")
     league = req.get("del-league")
-    if user != None:
+    if user:
       print("deleting " + str(user))
       q.del_user(user)
-    elif req != None:
-      print("delete " + str(league))
+    elif league:
+      print("deleting " + str(league))
       q.del_league(league)
     return redirect(request.url)
-  return render_template('./admin/manage_leagues.html', lg_names=lg_names, users=users)
+  return render_template('./admin/manage_leagues.html', lgs=lgs, users=users)
 
 if __name__ == '__main__':
   app.run()

@@ -26,7 +26,7 @@ def get_url(pokemon):
 
 def add_initial_draftlist():
   rows = []
-  with open(file_path+"tierlists/ywnb_2.csv","r") as csv_file:
+  with open(file_path+"tierlists/YWNBSeason2.csv","r") as csv_file:
     data = csv.reader(csv_file, delimiter=',')
     tiers = next(data)
     for row in data:

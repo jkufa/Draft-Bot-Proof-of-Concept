@@ -9,29 +9,30 @@
       <label>Select League</label></br>
       <select class="form-control" id="del-league" name="del-league" placeholder="Select a league" required>
       <option value="" selected disabled>Leagues</option>
-      {% for lg in lg_names %}
-        <option>{{ lg }}</option>
+      {% for lg in lgs %}
+        <option>{{ lg.name }}</option>
       {% endfor %}
     </select>
     </div>
-    <center><button name="create_league" type="submit" class="btn submit-league" id="submit" value="0">NUKE</button></center>
+    <center><button name="del-league" type="submit" class="btn submit-league" id="submit">NUKE</button></center>
     </form>
     <h1>Remove a User</h1> 
     <form action="#" method="POST">
       <div class="form-group">
-        {% for lg in lg_names %}
-        <h2>Users in {{ lg }}</h2>
+        {% for lg in lgs %}
+        <h2>Users in {{ lg.name }}</h2>
         <label>Select User</label></br>
-        <select class="form-control" id="del-user" name="format" placeholder="Select a user" required>
-        <option value="" selected disabled>Users</option>
-        {% for user in users %}
-          {& if user.league_id==1 %}
-            <option>{{ user.username }}</option>
+        <select class="form-control" id="del-user" name="del-user" placeholder="Select a user">
+          <option value="" selected disabled>Users</option>
+          {% for user in users %}
+            {% if user.league_id==lg.id %}
+              <option>{{ user.username }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+        <center><button name="del-user" type="submit" class="btn submit-league" id="submit">Remove User</button></center>
         {% endfor %}
-      {% endfor %}
-    </select>
     </div>
-    <center><button name="create_league" type="submit" class="btn submit-league" id="submit" value="0">Remove User</button></center>
     </form>
   </section>
 </main>

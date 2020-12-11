@@ -2,7 +2,7 @@ from collections import defaultdict
 import csv
 from sqlalchemy import create_engine, Table, Column, Integer, String, ForeignKey, CheckConstraint
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import backref, relation, relationship
 
 Base = declarative_base()
 
@@ -23,7 +23,7 @@ class MatchLeague(Base): #LeagueMatches relationship
   match_id = Column('id', Integer, ForeignKey('match.id'), primary_key=True)
   # 1 League Many MatchesScheduled
   league_id = Column('league_id', Integer, ForeignKey('league.id'),primary_key=True)
-  league = relationship('League', back_populates='matches_scheduled')
+  # league = relationship('League', back_populates='leagues')
 
 class PokemonTeam(Base):
   __tablename__ = "pokemon_team"
@@ -51,10 +51,10 @@ class League(Base):
     format =  Column('format', String(20))
     # 1 DraftList Many Leagues
     dlist_id = Column('dlist_id', Integer, ForeignKey('draftlist.id'))
-    # dlist = relationship('DraftList', back_populates='leagues')
-    users = relationship("User")
-    # users = relationship("User", back_populates="league")
-    matches_scheduled = relationship("MatchLeague", back_populates='league')
+    users = relationship("User", cascade="all,delete", backref="league")
+    # matches_scheduled = relationship("MatchLeague", back_populates='league')
+    matches_leagues = relationship("MatchLeague", cascade="all,delete", backref="league")
+
   
 class User(Base):
   __tablename__ = "user"
@@ -63,6 +63,9 @@ class User(Base):
   # UserLeague relationship
   league_id = Column('league_id', Integer, ForeignKey('league.id'))
   # league = relationship("League", back_populates = "users")
+  coaches = relationship("Coach",cascade="all,delete",backref="user")
+  admins = relationship("Administrator",cascade="all,delete",backref="user")
+
 
 class Administrator(Base):
   __tablename__ = "administrator"
@@ -73,7 +76,7 @@ class Coach(Base):
   discord_username = Column('discord_username', String, ForeignKey('user.username'), primary_key=True)
   showdown_username = Column('showdown_username', String, unique=True)
   # TeamCoach relationship
-  team = relationship("Team", uselist=False, back_populates="coach")
+  team = relationship("Team", uselist=False, back_populates="coach",cascade="all,delete")
   
 class Team(Base):
   __tablename__ = "team"
@@ -85,7 +88,7 @@ class Team(Base):
   coach_username = Column('coach_username', String, ForeignKey('coach.discord_username'))
   coach = relationship("Coach", back_populates="team")
   # TeamMatch relationship
-  matches = relationship("Match", secondary="team_match")
+  matches = relationship("Match", secondary="team_match",cascade="all,delete",backref="team")
 
 class Match(Base):
   __tablename__ = "match"
@@ -99,4 +102,4 @@ class Match(Base):
   # p1 = Column('p1', String(80))
   # p2 = Column('p2', String(80))
   # TeamMatch Relationship
-  teams = relationship("Team", secondary="team_match")
+  # teams = relationship("Team", secondary="team_match")

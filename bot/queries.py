@@ -177,7 +177,7 @@ class Query():
     t = self.query_team(d.username)
     pkmn = session.query(Pokemon).join(PokemonTeam).filter_by(team_id=t.id).all()
     out = ("**"+ str(c.discord_username) + "'s Info**\nShowdown Username: " + str(c.showdown_username) 
-    + "\nTeam: " + str(t.name) + "\nDifferential: " + str(t.differential) + "\nPokemon: ")
+    + "\nTeam: " + str(t.name) + "\nTimezone: " + str(d.timezone) + "\nDifferential: " + str(t.differential) + "\nPokemon: ")
     for mon in pkmn:
       out = out + str(mon.name) + ", "
     return out[0:-2]

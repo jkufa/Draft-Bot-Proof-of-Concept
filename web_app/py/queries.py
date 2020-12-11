@@ -48,9 +48,6 @@ class Query:
         session.add(admin)
       session.commit()
     
-  def fetch_leagues(self):
-    lgs = session.query(League).all()
-    return lgs
 
   def gen_round_robin(self,lname):
     l_id = session.query(League).filter_by(name=lname).first().id
@@ -102,7 +99,7 @@ class Query:
 
   # TODO: add function that inserts teams into database so gen_round_robin can run
   def init_teams(self, lname):
-    league = session.query(League).filter_by(name=lname).first()
+    league = self.fetch_league(lname)
     users = session.query(User).filter_by(league_id=league.id).all()
     for user in users:
       # print(user.username)
@@ -119,19 +116,42 @@ class Query:
       ids.append(team.id)
     return ids
 
+  def fetch_leagues(self):
+    lgs = session.query(League).all()
+    return lgs
+    
+  def fetch_league(self,lname):
+    return session.query(League).filter_by(name=lname).first()
+
   def fetch_users(self):
     return session.query(User).all()
 
-  def fetch_dlists(self):
-    return session.query(DraftList).all()
+  def fetch_dlist(self,dlist_id):
+    return session.query(DraftList).filter_by(id=dlist_id).first()
 
-  def fetch_dlist_pokemon(self):
-    return session.query(DraftListPokemon).all()
+  def fetch_dlist_pokemon(self,dlist_id):
+    return session.query(DraftListPokemon).filter_by(dlist_id=dlist_id).all()
 
   def del_user(self,username):
-    user = session.query(User).filter_by(username=username).delete()
+    user = session.query(User).filter_by(username=username).first()
+    session.delete(user)
     session.commit()
   
   def del_league(self,lname):
-    league = session.query(League).filter_by(name=lname).delete()
+    league = session.query(League).filter_by(name=lname).first()
+    session.delete(league)
     session.commit()
+
+  def fetch_league_dlist(self,lname):
+    league = self.fetch_league(lname)
+    return session.query(DraftList).filter_by(id=league.dlist_id).first()
+
+  def fetch_tiers(self,dlist_id):
+    tiers = []
+    q = session.query(DraftListPokemon.pkmn_value).filter_by(dlist_id=dlist_id).distinct().order_by(DraftListPokemon.pkmn_value).all()
+    for value in q:
+      tiers.append(*value)
+    return tiers
+
+  def query_pkmn_name_by_value(self,pkmn_value):
+    return session.query(DraftListPokemon.pkmn_name).filter_by(pkmn_value=pkmn_value).all()
