@@ -3,44 +3,46 @@
 {% block body %}
 <main class="leagues">
   <section class="section1">
-    <h1>View Draft Lists</h1>
-    <form action="#view" method="POST">
-      <div class="form-group">
-      <label>Select League</label></br>
-      <select class="form-control" id="sel-league" name="sel-league" placeholder="Select a league" required>
-      <option value="" selected disabled>Leagues</option>
-      {% for lg in leagues %}
-      <option>{{ lg.name }}</option>
-    {% endfor %}
-    </select>
-    </div>
-    <center><button name="select-league" type="submit" class="btn submit-league" id="submit" value="0">View Draft List</button></center>
-    </form>
-  </section>
-  <section class="section2">
-    {% if button_pressed %}
-    <h1>Draft List</h1></br>
-    <center>
-    <table class="table table-dark table-striped">
-      <thead class="thead-dark">
-        <tr>
-          {% for tier in tiers %}
-            <th scope="col" style="text-align: center;">{{ tier }}</th>
-          {% endfor %}
-          </tr>
-        </thead>
-        <tbody class="table-striped">
-          {% for row in rows %}
-          <tr>
-            {% for cell in row %}
-            <td style="text-align: center; padding: 4px 10px 4px 10px;">{{ cell }}</td>
+    <div class="container">
+      <h1>View Draft Lists</h1>
+      <form action="#view" method="POST">
+        <div class="form-group">
+          <label>Select League</label></br>
+          <select class="form-control" id="sel-league" name="sel-league" placeholder="Select a league" required>
+            <option value="" selected disabled>Leagues</option>
+            {% for lg in leagues %}
+            <option>{{ lg.name }}</option>
             {% endfor %}
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </center>
-    {% endif %}
-  </section>
+          </select>
+        </div>
+        <center><button name="select-league" type="submit" class="btn submit-league" id="submit" value="0">View Draft List</button></center>
+      </form>
+    </section>
+    <section class="section2">
+      {% if button_pressed %}
+      <h1>Draft List</h1></br>
+      <center>
+        <table class="table table-dark table-striped">
+          <thead class="thead-dark">
+            <tr>
+              {% for tier in tiers %}
+              <th scope="col" style="text-align: center;">{{ tier }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody class="table-striped">
+            {% for row in rows %}
+            <tr>
+              {% for cell in row %}
+              <td style="text-align: center; padding: 4px 10px 4px 10px;">{{ cell }}</td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </center>
+      {% endif %}
+    </div>
+    </section>
 </main>
 {% endblock %}

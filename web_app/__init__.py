@@ -20,6 +20,10 @@ def read_draftlist(csv_name):
       print(row)
   return headings,rows
 
+@app.errorhandler(404) 
+def not_found(e): 
+  return render_template("404.html") 
+
 @app.route('/')
 def index():
   return render_template('index.html')
@@ -71,8 +75,10 @@ def create_league():
         is_admin.append(False)
     # Send data to database
     # print(users, timezones, is_coach, is_admin)
-    q.ins_league(league_name, league_format, tierlist)
-    q.ins_users(users,timezones,is_coach,is_admin,league_name)
+    if(not q.ins_league(league_name, league_format, tierlist)):
+      return render_template('404.html',error_msg="A League with that name already exists!")
+    if(not q.ins_users(users,timezones,is_coach,is_admin,league_name)):
+      return render_template('404.html',error_msg="One of the users you tried to add is already paticipating in a league!")
     q.init_teams(league_name)
     matches = q.gen_round_robin(league_name)
     # q.ins_weekly_matches(league_name, matches)

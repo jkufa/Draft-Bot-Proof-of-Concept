@@ -30,7 +30,12 @@ class Query:
     tierlist = session.query(DraftList).filter_by(name=tierlist).first()
     league = League(name=lname,format=lformat,dlist_id=tierlist.id)
     session.add(league)
-    session.commit()
+    try:
+      session.commit()
+    except:
+      session.rollback()
+      return False
+    return True
 
   def ins_users(self, users, timezones, is_coach, is_admin, lname):
     league = session.query(League).filter_by(name=lname).first()
@@ -46,7 +51,12 @@ class Query:
       if is_admin[i]:
         admin = Administrator(username=users[i])
         session.add(admin)
-      session.commit()
+      try:
+        session.commit()
+      except:
+        session.rollback()
+        return False
+    return True
     
 
   def gen_round_robin(self,lname):
@@ -107,7 +117,11 @@ class Query:
       team_name = str(coach.discord_username).split('#')[0] + "'s Team"
       team = Team(league_id=league.id,coach_username=coach.discord_username,name=team_name)
       session.add(team)
-    session.commit()
+      try:
+        session.commit()
+      except:
+        session.rollback()
+        print("exception occured")
   
   def fetch_team_ids(self,league_id):
     teams = session.query(Team).filter_by(league_id=league_id).all()

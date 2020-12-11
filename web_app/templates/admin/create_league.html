@@ -3,38 +3,53 @@
 {% block body %}
 <main class="admin" id="admin">
   <section class="section1">
-    <h1>Admin</h1>
   </section>
   <section class="create-league">
-      <h2>Create New League</h2>
+    <div class="container">
+      <h1>Admin</h1>
+      <div class="row align-self-center">
+        <h2>Create New League</h2>
+      </div>
       <form action="#" method="POST">
-        <div class="form-group">
-          <label>League Name</label>
-          <input type="text" class="form-control" id="leaguename" name="leaguename" placeholder="Select a league name" required>
+      <div class="row align-self-center">
+        <div class="col-lg lg-name">
+          <div class="form-group">
+            <label>League Name</label>
+            <input type="text" class="form-control" id="leaguename" name="leaguename" placeholder="Select a league name" required>
+          </div>
         </div>
-        <div class="form-group create-league">
+        <div class="col-md format">
+        <div class="form-group">
           <label>League Format</label>
           <select class="form-control" id="format" name="format" placeholder="Select a Format" required>
             <option value="" selected disabled>Select format</option>
             <option>Gen 8 OU</option>
           </select>
         </div>
-        <section class="users">
-          <h2>Add Users</h2>
-            <div class="form-row">
-              <button id="extra-user" name="usernum" type="button" class="btn add-user-btn" value="0" onclick="duplicate()">Add another user</button>
-            </div>
-         <div id="add-users0" class="add-users fade-in">
-          <div class="form-row">
-            <div class="col-lg-5">
-              <div class="form-group input-group mb-3 add-user-input">
-                <input type="text" class="form-control username" id="discord_username" name="discord_username0" placeholder="Username" aria-label="Username" aria-describedby="basic-addon2" required>
+      </div>
+      </div>
+      <div class="row align-self-center">
+        <h2>Add Users</h2>
+      </div>
+      <div class="row align-self-center">
+        <div class="col-sm-2">
+          <button id="extra-user" name="usernum" type="button" class="btn add-user-btn" value="0" onclick="duplicate()">Add another user</button>
+        </div>
+        <div class="col-sm-2">
+          <button id="remove-user" name="usernum" type="button" class="btn remove-user-btn" value="0" onclick="remove()">Remove user</button>
+        </div>
+      </div>
+      <div id="add-users0" class="add-users fade-in">
+        <div class="form-row align-self-center">
+          <div class="col-lg-6">
+            <div class="form-group input-group mb-3 add-user-input">
+              <input type="text" class="form-control username" id="discord_username0" name="discord_username0" placeholder="Username" aria-label="Username" aria-describedby="basic-addon2" required>
                 <div class="input-group-append">
                   <span class="input-group-text" id="basic-addon">Example#1234</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="col-lg-3">
+            <div class="col-sm-3">
               <div class="form-group add-user-input">
                 <select class="form-control timezone" id="timezone" name="timezone0" placeholder="Select a timezone" required>
                   <option value="" selected disabled>Select timezone</option>
@@ -45,7 +60,7 @@
                 </select>
               </div>
             </div>
-            <div class="col">
+            <div class="col-sm-2">
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" value="" id="check-coach" name="check-coach0">
                 <label class="form-check-label" for="check-coach">Make Coach</label>
@@ -53,23 +68,29 @@
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" value="" id="check-admin" name="check-admin0">
                 <label class="form-check-label" for="check-admin">Make Admin</label>
-              </div>
             </div>
           </div>
-          </div>
-        </section>
-        <section class="create-tierlist">
-          <h2>Choose Tier List</h2>
+        </div>
+      </div>
+      </div>
+      <div class="container two">
+      <div class="row align-self-center">
+        <h2>Choose Tier List</h2>
+      </div>
+      <div class="form-row align-self-center">
+        <div class="col-sm-2">
           <div class="form-group add-user-input">
             <select class="form-control" id="tierlist" name="tierlist" placeholder="Select a tier list">
               <option value="" selected disabled>Select a tierlist</option>
               <option>YWNB Season 2</option>
             </select>
           </div>
-        </section>
-        <!-- <button type="submit" class="btn">Submit</button> -->
-        <center><button name="create_league" type="submit" class="btn submit-league" id="submit" value="0">SUBMIT LEAGUE</button></center>
-      </form>
-    <section>
+        </div>
+      </div>
+      <center><button name="create_league" type="submit" class="btn submit-league" id="submit" value="0">SUBMIT LEAGUE</button></center>
+    </form>
+  </div>
+  </section>
+  
 </main>
 {% endblock %}

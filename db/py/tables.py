@@ -55,7 +55,6 @@ class League(Base):
     # matches_scheduled = relationship("MatchLeague", back_populates='league')
     matches_leagues = relationship("MatchLeague", cascade="all,delete", backref="league")
 
-  
 class User(Base):
   __tablename__ = "user"
   username = Column('username', String, primary_key=True)
@@ -65,7 +64,6 @@ class User(Base):
   # league = relationship("League", back_populates = "users")
   coaches = relationship("Coach",cascade="all,delete",backref="user")
   admins = relationship("Administrator",cascade="all,delete",backref="user")
-
 
 class Administrator(Base):
   __tablename__ = "administrator"

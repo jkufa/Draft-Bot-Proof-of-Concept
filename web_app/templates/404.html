@@ -1,0 +1,14 @@
+{% extends "_base.html" %}
+{% block title %}Welcome to Drafty!{% endblock %}
+{% block body %}
+<main class="404">
+  <div class="bg-image"></div>
+  <section class="title">
+    <div class="container">
+      <h1>Oops. Something went wrong.</h1>
+    {% if error_msg != "" %}
+      <h2>Error: {{error_msg}}</h1>
+    {% endif %}
+    </section>
+</main>
+{% endblock %}
