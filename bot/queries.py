@@ -20,7 +20,7 @@ class Query():
     global session
     session = DBSession()
     self.league = session.query(League).filter_by(name=lname).first()
-
+  
   def register_showdown_user(self,d_user, sd_user):
     try:
       user = session.query(Coach).filter_by(discord_username=d_user).first()

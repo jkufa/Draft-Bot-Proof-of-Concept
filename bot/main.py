@@ -2,7 +2,7 @@ import discord
 import json
 
 from sqlalchemy.sql.dml import Update
-import os,sys
+import os
 from queries import Query
 
 file_path = os.path.abspath(os.getcwd())+"/bot/"
@@ -18,22 +18,27 @@ config_data = json.loads(data)
 client = discord.Client()
 token = token_data['token']
 prefix  = config_data['prefix']
-
-# Load custom queries
-file_path = os.path.abspath(os.getcwd())+"/db/pokemon_draft_league.db"
-if len(sys.argv) <= 1:
-  lname = input("enter league name to run bot for: ")
-else:
-  lname = sys.argv[1]
-q = Query(file_path,lname)
+invite = config_data['invite']
 
 # global vars
 can_redraft = False
 can_draft = False
+valid_league = False
+
+# Load custom queries
+file_path = os.path.abspath(os.getcwd())+"/db/pokemon_draft_league.db"
+while not valid_league:
+  lname = input("Enter league name to run with Dafty: ")
+  q = Query(file_path,lname)
+  if q.league == None:
+    print("Invalid league!")
+  else:
+    valid_league = True
 
 @client.event
 async def on_ready():
   print('Logged in as {0.user}'.format(client))
+  print('To test out Drafty, go here: ' + invite)
 
 @client.event
 async def on_message(message):
