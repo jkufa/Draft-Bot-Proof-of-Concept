@@ -85,8 +85,6 @@ async def on_message(message):
         await message.channel.send(q.user_info(msg))
     elif(command.lower() == "rankings"):
       await message.channel.send(q.rankings())
-    elif(command.lower() == "matchesplayed"):
-      await message.channel.send("TODO: !" + command.lower())
     elif(command.lower() == "pokemon"):
       if(not args):
         await message.channel.send("Error: you're missing parameters. Type !help for more info")
@@ -103,7 +101,7 @@ async def on_message(message):
           await message.channel.send("Error: You are not a registered league user!")
       await message.channel.send("TODO: !" + command.lower())
     elif(command.lower() == "average" or command.lower() == "avg"):
-      await message.channel.send("TODO: !" + command.lower())
+      await message.channel.send(q.calc_avg_diff())
     else:
       await message.channel.send("Error: that's not a valid command!")
 

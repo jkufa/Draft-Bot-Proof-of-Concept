@@ -1,10 +1,11 @@
+from werkzeug.wrappers import PlainRequest
 import discord
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import query_expression, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import sys,os,json,requests
 sys.path.insert(1, os.path.abspath(os.getcwd())+"/db/py")
-from tables import DraftList,League,User,Administrator,Coach,Pokemon,Team,TeamMatch,Match,PokemonTeam,DraftListPokemon
+from tables import DraftList,League,User,Administrator,Coach,Pokemon,Team,TeamMatch,Match,MatchLeague,PokemonTeam,DraftListPokemon
 
 Base = declarative_base()
 
@@ -27,6 +28,7 @@ class Query():
       session.commit()
       return True
     except:
+      session.rollback()
       return False
 
   def select_pokemon(self, pkmn_name):
@@ -47,16 +49,17 @@ class Query():
     differential = self.calc_differential(log)
     teams = self.fetch_teams(log)
     for i in range(0,len(log)):
-      # print(log[i])
       if "|win|" in log[-i]:
         winner = log[-i].split("|")[-1]
-    # TODO: Add db stuff, round robin stuff
     coaches = []
     if self.check_showdown_names([p1,p2]):
       for p in [p1,p2]:
         coaches.append(session.query(Coach).filter_by(showdown_username=p).first().discord_username)
         self.update_team(p,differential,winner=True) if winner==p else self.update_team(p,differential)
-      self.update_match(coaches, url,differential, winner)
+      if not self.update_match(coaches, url,differential, winner):
+        return "Error submitting replay. This match has already been submitted!"
+    else:
+      return "Error submitting replay. These showdown users are not registered!"
 
     # I'm sorry, I really wanted to do this in one line 
     return p1 + "'s team: " + str(teams[0])[1:-1].replace("'","") + "\n" + p2 +"'s team: " + str(teams[1])[1:-1].replace("'","") + "\n" + "Winner: " + winner + "\nDifferential: " + str(abs(self.calc_differential(log)))
@@ -85,14 +88,14 @@ class Query():
   def check_showdown_names(self, players):
     for player in players:
       coach = session.query(Coach).filter_by(showdown_username=player).first()
-      if coach.discord_username == None:
+      if coach == None:
         return False
     return True      
 
   def update_match(self,coaches,url,differential,winner):
     teams = []
     for coach in coaches:
-      team = session.query(Team).filter_by(coach_username=coach, league_id=self.league_id).first()
+      team = session.query(Team).filter_by(coach_username=coach, league_id=self.league.id).first()
       teams.append(team.id)
     t1 = session.query(TeamMatch).filter(TeamMatch.team_id==teams[0]).all()
     t2 = session.query(TeamMatch).filter(TeamMatch.team_id==teams[1]).all()
@@ -101,15 +104,17 @@ class Query():
         if x.match_id == y.match_id:
           m_id = session.query(Match).filter_by(id=x.match_id).first().id
     match = session.query(Match).filter_by(id=m_id).first()
-    match.url=url
-    match.differential=differential
-    match.winner=winner
-    session.commit()
+    if not match.url and match.differential == 0:
+      match.differential=differential
+      match.winner=winner
+      match.url=url
+      session.commit()
+      return True
+    return False
   
   def update_team(self,team,differential,winner=False):
     coach = session.query(Coach).filter_by(showdown_username=team).first()
     t_diff = session.query(Team).filter_by(coach_username=coach.discord_username).first().differential
-    print(team)
     if winner:
       t_diff = t_diff + differential
       team = session.query(Team).filter_by(coach_username=coach.discord_username).first()
@@ -119,7 +124,6 @@ class Query():
       team = session.query(Team).filter_by(coach_username=coach.discord_username).first()
       team.differential=t_diff
     session.commit()
-    print(team)
 
   def query_coach(self, discord_username):
     coach = session.query(Coach).filter_by(discord_username=discord_username).first()
@@ -132,15 +136,16 @@ class Query():
   
   def add_pokemon_to_team(self,username,pokemon_name):
     team = self.query_team(username)
-    pokemon = session.query(DraftListPokemon).filter_by(dlist_id=self.league.dlist_id,name=pokemon_name.capitalize()).first()
+    pokemon = session.query(DraftListPokemon).filter_by(dlist_id=self.league.dlist_id,pkmn_name=pokemon_name.capitalize()).first()
     if pokemon != None:
-      pokemon_team = PokemonTeam(pkmn_name=pokemon.name, team_id = team.id)
+      pokemon_team = PokemonTeam(pkmn_name=pokemon.pkmn_name, team_id = team.id)
+      session.add(pokemon_team)
       try: 
-        session.add(pokemon_team)
+        session.commit()
       except:
+        session.rollback()
         return("Error adding Pokemon. Perhaps it's already on your team?")
-      session.commit()
-      return (str(pokemon.name) + " added to team " + str(team.name))
+      return (str(pokemon.pkmn_name) + " added to team " + str(team.name))
     return ("Error. This Pokemon does not exist!")
   
   def replace_pokemon_on_team(self,username,curr_mon_name,new_mon_name):
@@ -171,7 +176,6 @@ class Query():
     return out
   
   def user_info(self,discord_username):
-    print(discord_username)
     d = session.query(User).filter(User.username.contains(discord_username)).first()
     c = self.query_coach(d.username)
     t = self.query_team(d.username)
@@ -188,6 +192,15 @@ class Query():
     session.commit()
     return "Registered showdown username " + sd_username
 
+  def calc_avg_diff(self):
+    matches_played = session.query(Match).join(MatchLeague).filter(MatchLeague.league_id==self.league.id).all()
+    n = 0
+    total = 0
+    for match in matches_played:
+      if match.differential > 0:
+        total += match.differential
+        n += 1
+    return "The average match differential for " + self.league.name + " is " + str(total//n) + "."
 
 
 

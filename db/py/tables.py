@@ -20,7 +20,7 @@ class TeamMatch(Base):
 
 class MatchLeague(Base): #LeagueMatches relationship
   __tablename__ = "match_league"
-  match_id = Column('id', Integer, ForeignKey('match.id'), primary_key=True)
+  match_id = Column('match_id', Integer, ForeignKey('match.id'), primary_key=True)
   # 1 League Many MatchesScheduled
   league_id = Column('league_id', Integer, ForeignKey('league.id'),primary_key=True)
   # league = relationship('League', back_populates='leagues')

@@ -4,10 +4,15 @@
 <main class="contact">
   <section class="manage-league">
     <div class="container">
-      <h1>Destroy a League</h1> 
+      <div class="row align-self-center">
+        <h1>Destroy a League</h1> 
+      </div>
       <form action="#" method="POST">
         <div class="form-group">
+        <div class="row align-self-center">
           <label>Select League</label></br>
+        </div>
+        <div class="row align-self-center">
           <select class="form-control" id="del-league" name="del-league" placeholder="Select a league" required>
             <option value="" selected disabled>Leagues</option>
             {% for lg in lgs %}
@@ -15,14 +20,22 @@
             {% endfor %}
           </select>
         </div>
+      </div>
         <center><button name="del-league" type="submit" class="btn submit-league" id="submit">NUKE</button></center>
       </form>
-      <h1>Remove a User</h1> 
+      <div class="row align-self-center">
+        <h1>Remove a User</h1> 
+      </div>
       <form action="#" method="POST">
         <div class="form-group">
           {% for lg in lgs %}
-          <h2>Users in {{ lg.name }}</h2>
+         <div class="row align-self-center">
+        <h2>Users in {{ lg.name }}</h2>
+        </div>
+        <div class="row align-self-center">
           <label>Select User</label></br>
+        </div>
+        <div class="row align-self-center">
           <select class="form-control" id="del-user" name="del-user" placeholder="Select a user">
             <option value="" selected disabled>Users</option>
             {% for user in users %}
@@ -31,7 +44,8 @@
             {% endif %}
             {% endfor %}
           </select>
-          <center><button name="del-user" type="submit" class="btn submit-league" id="submit">Remove User</button></center>
+        </div>
+          <center><button name="del-user" type="submit" class="btn submit-league remove" id="submit">Remove User</button></center>
           {% endfor %}
         </div>
       </form>
