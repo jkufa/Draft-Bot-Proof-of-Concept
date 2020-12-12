@@ -28,7 +28,7 @@ valid_league = False
 # Load custom queries
 file_path = os.path.abspath(os.getcwd())+"/db/pokemon_draft_league.db"
 while not valid_league:
-  lname = input("Enter league name to run with Dafty: ")
+  lname = input("Enter league name to run with Drafty: ")
   q = Query(file_path,lname)
   if q.league == None:
     print("Invalid league!")

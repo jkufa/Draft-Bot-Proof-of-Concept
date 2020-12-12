@@ -5,7 +5,7 @@ Drafty is a Discord Bot paired with a localhost web application built with the i
 Setting up Drafty locally is a breeze! First, ensure the following prerequisites are met:
 * Python version 3.9 is installed along with pip (Any version that is 3.6+ will likely work, but 3.9 was used during development)
 * A compatible OS is being used (Fedora 33 was used during development)
-* SQLite3 is installed
+* A Discord account
 * Drafty is downloaded locally
 
 ### Step 0: Initialize a Virtual Environment (Optional)
