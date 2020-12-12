@@ -1,6 +1,6 @@
 from werkzeug.wrappers import PlainRequest
 import discord
-from sqlalchemy import create_engine, func
+from sqlalchemy import create_engine, func, desc
 from sqlalchemy.orm import query_expression, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import sys,os,json,requests
@@ -167,7 +167,7 @@ class Query():
     return False
   
   def rankings(self):
-    teams = session.query(Team).filter_by(league_id=self.league.id).order_by(Team.differential).all()
+    teams = session.query(Team).filter_by(league_id=self.league.id).order_by(desc(Team.differential)).all()
     out = "Rankings:\n"
     i = 1
     for team in teams:
@@ -177,6 +177,8 @@ class Query():
   
   def user_info(self,discord_username):
     d = session.query(User).filter(User.username.contains(discord_username)).first()
+    if d == None:
+      return "Error! That user could not be found."
     c = self.query_coach(d.username)
     t = self.query_team(d.username)
     pkmn = session.query(Pokemon).join(PokemonTeam).filter_by(team_id=t.id).all()

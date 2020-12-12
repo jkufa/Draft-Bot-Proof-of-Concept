@@ -81,7 +81,6 @@ class Query:
   def ins_weekly_matches(self, lname, matches, week_no):
     league = session.query(League).filter_by(name=lname).first()
     for match in matches:
-      print(match)
       if "BYE" not in match:
         m = self.ins_match(week_no)
         ml = self.ins_match_league(league.id,m.id)
@@ -112,7 +111,6 @@ class Query:
     league = self.fetch_league(lname)
     users = session.query(User).filter_by(league_id=league.id).all()
     for user in users:
-      # print(user.username)
       coach = session.query(Coach).filter_by(discord_username=user.username).first()
       team_name = str(coach.discord_username).split('#')[0] + "'s Team"
       team = Team(league_id=league.id,coach_username=coach.discord_username,name=team_name)

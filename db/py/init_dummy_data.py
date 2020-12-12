@@ -1,1 +1,0 @@
-# TODO: Create some abitrary arrays of data for an entire league. Can derive this from YWNB season 2.

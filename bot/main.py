@@ -57,7 +57,7 @@ async def on_message(message):
     #See what command was given
     if(command.lower() == "draft"):
       global can_draft
-      if(len(args) == 1):
+      if(len(args) > 0):
         if(can_draft):
           await message.channel.send(q.add_pokemon_to_team(str(message.author), str(args[0])))
         else:
