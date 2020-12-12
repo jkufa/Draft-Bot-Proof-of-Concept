@@ -1,8 +1,8 @@
 # Drafty, The Pokemon Draft League Bot
-Drafty is a Discord Bot paired with localhost web application built with the intent of easily running and managing a Pokemon Draft League.
+Drafty is a Discord Bot paired with a localhost web application built with the intent of easily running and managing a Pokemon Draft League.
 
 ## How to Setup
-Setting up Drafty locally is a breeze. First, ensure the following prerequisites are met:
+Setting up Drafty locally is a breeze! First, ensure the following prerequisites are met:
 * Python version 3.9 is installed along with pip (Any version that is 3.6+ will likely work, but 3.9 was used during development)
 * A compatible OS is being used (Fedora 33 was used during development)
 * SQLite3 is installed
@@ -28,7 +28,7 @@ If you would like to add back the dummy data, do the following:
 * Give `init_dummy_data.sh` permissions using `chmod -x init_dummy_data.sh`
 * Run the file with `./init_dummy_data.sh`
 
-### Step 3: Run the Web App
+### Step 2: Run the Web App
 To locally run the web application, perform the following:
 * Give `deploy_app.sh` permissions using `chmod -x deploy_app.sh`
 * Run the file with `./deploy_app.sh`
@@ -36,7 +36,7 @@ To locally run the web application, perform the following:
 
 Inside the web app you are able to create and manage leagues, as well as view draft lists for these leagues. To view a tutorial on navigating the web application, see the separate documentaion labeled  "Using The Web App."
 
-### Step 4: Run the Discord Bot
+### Step 3: Run the Discord Bot
 To run the Discord Bot, either end the current web application with ctrl+c, or run the bot in a new terminal window. One instance of the discord bot is tied to a single league.
 * Give `deploy_bot.sh` permissions using `chmod -x deploy_bot.sh`
 * Run the file with `./deploy_app.sh` 

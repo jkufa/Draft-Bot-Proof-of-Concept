@@ -200,6 +200,8 @@ class Query():
       if match.differential > 0:
         total += match.differential
         n += 1
+    if n == 0:
+      n = 1
     return "The average match differential for " + self.league.name + " is " + str(total//n) + "."
 
 
