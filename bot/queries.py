@@ -206,5 +206,49 @@ class Query():
       n = 1
     return "The average match differential for " + self.league.name + " is " + str(total//n) + "."
 
+  def fetch_player_matches(self, t):
+    matches = session.query(Match).join(TeamMatch).filter(TeamMatch.team_id==t.id).filter(TeamMatch.match_id==Match.id).all()
+    return matches
+  
+  def find_coach(self,player):
+    return session.query(Coach).filter(Coach.discord_username.contains(player)).first()
+
+  def print_player_matches(self,player):
+    c = self.find_coach(player)
+    t = self.query_team(c.discord_username)
+    matches =  self.fetch_player_matches(t)
+    out = player + "'s matches" + "\n"
+    for match in matches:
+      opponent = session.query(TeamMatch).filter_by(match_id=match.id).filter(TeamMatch.team_id != t.id).first()
+      opponent_team = session.query(Team).filter_by(id=opponent.team_id).first()
+      out += c.discord_username + " vs. " + opponent_team.coach_username + "\n"
+    return out
+  
+  def fetch_matches_played(self, player):
+    matches = self.fetch_player_matches(player)
+    played = player + "'s played matches: \n"
+    for match in matches:
+      if match.url != None:
+        played += match.url + "\n"
+    return played
+  
+  def fetch_match(self,p1,p2):
+    try:
+      p1c = self.find_coach(p1)
+      p2c = self.find_coach(p2)
+      p1t = self.query_team(p1c.discord_username)
+      p2t = self.query_team(p2c.discord_username)
+      p1m =  self.fetch_player_matches(p1t)
+      p2m =  self.fetch_player_matches(p2t)
+    except:
+      return "Error: A user could not be found. Make sure you're command is right.\nProper syntax: `!match <user 1>,<user 2>` (no space with comma)"
+    for m1 in p1m:
+      for m2 in p2m:
+        if m1.id == m2.id:
+          if m1.url != None:
+            return p1c.discord_username + "vs. " +  p2c.discord_username + "\n Match: " + m1.url
+          else:
+            return p1c.discord_username + "vs. " +  p2c.discord_username + "\n They haven't played yet!"
+    return "Error: Could not find match for those 2 users!"
 
 

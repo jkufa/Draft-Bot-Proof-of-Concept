@@ -104,9 +104,32 @@ async def on_message(message):
           await message.channel.send("Registered Showdown Username " + args[1] +  " successfully!")
         else:
           await message.channel.send("Error: You are not a registered league user!")
-      await message.channel.send("TODO: !" + command.lower())
     elif(command.lower() == "average" or command.lower() == "avg"):
       await message.channel.send(q.calc_avg_diff())
+    elif(command.lower() == "matches"):
+      if(not args):
+        await message.channel.send(q.print_player_matches(str(message.author)))
+      elif(len(args) == 1):
+        await message.channel.send(q.print_player_matches(args[0]))
+    elif(command.lower() == "match"):
+      msg = ''
+      for arg in args:
+        msg = msg + arg + " "
+      msg = msg[0:-1]
+      msgs = msg.split(',')
+      for m in msgs:
+        print(m)
+      if(len(msgs) == 2):
+        await message.channel.send(q.fetch_match(msgs[0],msgs[1]))
+    elif(command.lower() == "matchesplayed"):
+      if(not args):
+        await message.channel.send(q.fetch_matches_played(str(message.author)))
+      elif(len(args) > 0):
+        msg = ''
+        for arg in args:
+          msg = msg + arg + " "
+        msg = msg[0:-1]
+        await message.channel.send(q.fetch_matches_played(msg))
     else:
       await message.channel.send("Error: that's not a valid command!")
 

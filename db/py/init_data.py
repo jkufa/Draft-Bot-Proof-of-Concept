@@ -50,9 +50,6 @@ def insert_by_col(tier,col):
   for mon in mons:
     dlist_mon = DraftListPokemon(dlist_id=dlist.id, pkmn_name=mon.name,pkmn_value=tier)
     session.add(dlist_mon)
-
-    # print(mon.name)
-  # dlist.pokemons = [mon for mon in mons]
   session.commit()
 
 # Check for duplicates
@@ -166,7 +163,6 @@ def gen_round_robin(lname):
     teams.append("BYE")
   week_no = 1
   matches = [] # in case unbound
-  print(teams)
   for i in range(0,len(teams)-1):
     matches = []
     for i in range(0,len(teams)//2):
