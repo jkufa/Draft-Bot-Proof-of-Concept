@@ -33,7 +33,7 @@ class PokemonTeam(Base):
 class DraftList(Base):
     __tablename__ = "draftlist"
     id = Column('id', Integer, primary_key=True)
-    name = Column('name', String, unique=True)
+    name = Column('name', String(50), unique=True)
     pokemons = relationship("Pokemon", secondary="draftlist_pokemon")
     leagues = relationship("League", backref='draftlist')
 

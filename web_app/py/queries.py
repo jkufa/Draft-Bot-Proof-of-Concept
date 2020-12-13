@@ -153,6 +153,7 @@ class Query:
     league = session.query(League).filter_by(name=lname).first()
     session.delete(league)
     session.commit()
+    
 
   def fetch_league_dlist(self,lname):
     league = self.fetch_league(lname)

@@ -225,8 +225,10 @@ class Query():
     return out
   
   def fetch_matches_played(self, player):
-    matches = self.fetch_player_matches(player)
-    played = player + "'s played matches: \n"
+    c = self.find_coach(player)
+    t = self.query_team(c.discord_username)
+    matches = self.fetch_player_matches(t)
+    played = c.discord_username + "'s played matches: \n"
     for match in matches:
       if match.url != None:
         played += match.url + "\n"
@@ -246,9 +248,23 @@ class Query():
       for m2 in p2m:
         if m1.id == m2.id:
           if m1.url != None:
-            return p1c.discord_username + "vs. " +  p2c.discord_username + "\n Match: " + m1.url
+            return p1c.discord_username + " vs. " +  p2c.discord_username + "\n Match: " + m1.url
           else:
-            return p1c.discord_username + "vs. " +  p2c.discord_username + "\n They haven't played yet!"
+            return p1c.discord_username + " vs. " +  p2c.discord_username + "\n They haven't played yet!"
     return "Error: Could not find match for those 2 users!"
 
+  def del_user(self,username):
+    if self.is_admin(username):
+      user = session.query(User).filter_by(username=username).first()
+      session.delete(user)
+      try:
+        session.commit()
+      except:
+        print("exception occured")
+        session.rollback()
+        return "Error: Either the user does not exist or cannot be deleted."
+      return "Removed " + username + " from the league"
+    return "Error: You do not have sufficient permissions to run this command!"
+
+    
 

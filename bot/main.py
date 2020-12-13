@@ -117,8 +117,6 @@ async def on_message(message):
         msg = msg + arg + " "
       msg = msg[0:-1]
       msgs = msg.split(',')
-      for m in msgs:
-        print(m)
       if(len(msgs) == 2):
         await message.channel.send(q.fetch_match(msgs[0],msgs[1]))
     elif(command.lower() == "matchesplayed"):
@@ -130,6 +128,15 @@ async def on_message(message):
           msg = msg + arg + " "
         msg = msg[0:-1]
         await message.channel.send(q.fetch_matches_played(msg))
+    elif(command.lower() == "delete"):
+      if(len(args) > 0):
+        msg = ''
+        for arg in args:
+          msg = msg + arg + " "
+        msg = msg[0:-1]
+        await message.channel.send(q.del_user(msg))
+      else:
+        await message.channel.send("Error: missing paremeters!")
     else:
       await message.channel.send("Error: that's not a valid command!")
 
