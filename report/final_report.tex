@@ -21,13 +21,16 @@
 \maketitle
 
 \section*{Problem Statement}
-I build a Discord bot and localhost web application for managing and automating a Pokemon Draft League. A Pokemon Draft League is a custom game mode
+I built a Discord bot and localhost web application for managing and automating a Pokemon Draft League. A Pokemon Draft League is a custom game mode
 for Pokemon battling, where coaches form teams and draft Pokemon to compete head to head. This application is able to automate 
 a lot of the internal work involved in running such a league and it streamlines specific aspects of league upkeep such as updating rankings.
 
-The core interface is the Discord Bot. 
-This is because Discord is a vital platform for communication between players, and being able to query data in that same space is very convenient. 
-With that said, the web application, built for administrative use, is perfect to getting a league up and running.
+The core interface is the Discord Bot name Drafty. Drafty is able to manage matches, pokemon teams and more!
+The reason for a Discord bot core is that Discord is a vital platform for communication between players, and being able to query data in that same space is very convenient. 
+With that said, the web application, built for administrative use, is perfect to getting a league up and running.\\
+\begin{center}
+  \includegraphics[scale=.4]{drafty.png}
+\end{center}
 
 \section*{ER Model}
 \includegraphics[scale=.35]{PokemonDraftLeagueDB_final.png}
@@ -110,30 +113,44 @@ Please note that while the query syntax is made to mimic SQL, it is not 100\% th
             \begin{algorithmic}
                 \Function {Draft\_Pokemon}{$discord\_username$, $user\_message$}
                 \If{POKEMON \textbf{contains} $user\_message$}
+                \State{$team\_id$ = \textbf{SELECT} $Id$ \textbf{FROM} TEAM}
+                \State{\quad\quad\quad\quad\textbf{WHERE} TEAM.$discord\_username==discord\_username$}
                 \State{$pokemon$ = \textbf{SELECT} $Name$ \textbf{FROM} POKEMON}
                 \State{\quad\quad\quad\quad\quad \textbf{WHERE} $Name=user\_message$}
-                \State{$coach$ = \textbf{SELECT} $Name$ \textbf{FROM} COACH}
                 \State{\quad\quad\quad\quad\textbf{WHERE} $Name=discord\_username$}
-                \State{\textbf{INSERT INTO} POKEMON\_TEAM $Pokemon\_Name$, $Team\_Name$}
-                \State{\textbf{VALUES} $pokemon$, $coach$}
+                \State{\textbf{INSERT INTO} POKEMON\_TEAM $Pokemon\_Name$, $Team\_Id$}
+                \State{\textbf{VALUES} $pokemon$, $team\_id$}
                 \State{\textbf{print} "You selected: " + $pokemon$}
                 \Else{ \textbf{print } "ERROR. That is not a valid Pokemon!"}
                 \EndIf
                 \EndFunction
             \end{algorithmic}
         \end{algorithm}
-        \item Submit Replay (Insert): 
+        \newpage
+        \item Submit Replay (Modify): 
         \begin{algorithm}[H]
             \verb|!submit <Replay URL>|
             \label{pseudoPSO}
             \begin{algorithmic}
                 \Function {Submit\_Replay}{$user\_message$}
                 \If{$user\_message$ \textbf{starts with} https://replay...}
-                \State{Parse website data for $winner$, $loser$, $differential$, and $id$}
-                \State{\textbf{INSERT INTO} MATCH $ID$, $Differential$}
-                \State{\textbf{VALUES} $id$, $differential$}
-                \State{\textbf{INSERT INTO} MATCH\_PLAYERS $Winner$, $Loser$}
-                \State{\textbf{VALUES} $winner$, $loser$}
+                \State{Parse website data for $player1$, $player2$, $differential$}
+                \State{Find teams($player1,player2$)}
+                \State{Find $match\_id$ from TEAM\_MATCH}
+                \For{team in teams}
+                \If{team.$coach\_username == winner$}
+                  \State{\textbf{UPDATE} TEAM $differential$}
+                  \State{\textbf{SET} $differential=differential$}
+                  \State{\textbf{WHERE} $id==$team}
+                \Else
+                  \State{\textbf{UPDATE} TEAM $differential$}
+                  \State{\textbf{SET} $differential=-differential$}
+                  \State{\textbf{WHERE} TEAM.$id==$team}
+                \EndIf
+                \EndFor
+                \State{\textbf{UPDATE} MATCH}
+                \State{\textbf{SET} $url$, $differential$,$winner$}
+                \State{\textbf{WHERE} $MATCH.id==match\_id$}
                 \EndIf
                 \EndFunction
             \end{algorithmic}
@@ -152,31 +169,22 @@ Please note that while the query syntax is made to mimic SQL, it is not 100\% th
                 \State{\quad\quad\quad\quad\quad\quad\quad\quad\quad\textbf{WHERE} $Name=replace$}
                 \State{\textbf{UPDATE } $POKEMON\_COACH$}
                 \State{\textbf{SET } $Pokemon\_Name=replace$}
-                \State{\textbf{WHERE }$Pokemon\_Name=find$}
+                \State{\textbf{WHERE }$Pokemon\_Name==find$}
                 \State{\textbf{print } $find$ + " Has been replaced with " + $replace$}
                 \Else{\textbf{ print } "ERROR. That is not a valid Pokemon!"}
                 \EndIf
                 \EndFunction
             \end{algorithmic}
         \end{algorithm}
-        \item Delete User (Remove):
+        \newpage
+        \item Delete user (Remove):
         \begin{algorithm}[H]
             \verb|!delete <username>|
             \label{pseudoPSO}
             \begin{algorithmic}
                 \Function {Delete\_User}{$user\_message$}
-                \State{\textbf{Split} $user\_message$ \textbf{into} $find$ \textbf{and} $replace$}
-                \If{POKEMON \textbf{contains} $replace$}
-                \State{$find\_pokemon$ = \textbf{SELECT} $Name$ \textbf{FROM} POKEMON}
-                \State{\quad\quad\quad\quad\quad\quad\quad\quad \textbf{WHERE} $Name=find$}
-                \State{$replace\_pokemon$ = \textbf{SELECT} $Name$ \textbf{FROM} POKEMON}
-                \State{\quad\quad\quad\quad\quad\quad\quad\quad\quad\textbf{WHERE} $Name=replace$}
-                \State{\textbf{UPDATE } $POKEMON\_COACH$}
-                \State{\textbf{SET } $Pokemon\_Name=replace$}
-                \State{\textbf{WHERE }$Pokemon\_Name=find$}
-                \State{\textbf{print } $find$ + " Has been replaced with " + $replace$}
-                \Else{\textbf{ print } "ERROR. That is not a valid Pokemon!"}
-                \EndIf
+                \State{\textbf{DELETE } $USER$}
+                \State{\textbf{WHERE }$User.username==user\_message$}
                 \EndFunction
             \end{algorithmic}
         \end{algorithm}
@@ -189,30 +197,36 @@ Please note that while the query syntax is made to mimic SQL, it is not 100\% th
             \begin{algorithmic}
                 \Function {User\_Info}{$user\_message$}
                 \If{USER \textbf{contains} $user\_message$}
-                \State{R$1$ = \textbf{INNER JOIN} USER$.Discord\_Username$ = COACH$.Discord\_Username$}
-                \State{$R2$ = \textbf{INNER JOIN} R1$.Discord\_Username$ = COACH\_TEAM$.Coach\_Username$}
-                \State{$info$ = \textbf{SELECT} $Discord\_Username, Team\_Name, Showdown\_Name$ \textbf{FROM} $R2$}
-                \State{\qquad\quad \textbf{ WHERE }$Discord\_Name=user\_message$}
-                \State {\textbf{print } $info$}
+                \State{$c = $\textbf{SELECT} $*$ \textbf{FROM} COACH}
+                \State{\textbf{WHERE} COACH.$Username==user\_message$}
+                \State{$t = $\textbf{SELECT} $*$ \textbf{FROM} TEAM}
+                \State{\textbf{WHERE} TEAM.$Coach\_username==user\_message$}
+                \State{$Pokemon$ = \textbf{SELECT} * \textbf{FROM} POKEMON}
+                \State{\textbf{JOIN} DRAFTLIST\_POKEMON}
+                \State{\textbf{ON} POKEMON$.Name==$DRAFTLIST\_POKEMON.$Name$}
+                \State {\textbf{print } $c.name, t.name$}
+                \For{$mon$ in $Pokemon$}
+                \State {\textbf{print } $mon$}
+                \EndFor
                 \EndIf
                 \EndFunction
             \end{algorithmic}
         \end{algorithm}
-        \item Calc Average Differential (Join,Average):
+        \item Calculate average differential (Join, Average):
         \begin{algorithm}[H]
-            \verb|internal function|
             \label{pseudoPSO}
             \begin{algorithmic}
-                \Function {Differential}{$team\_name$}
-                \State{$positive$ = \textbf{SELECT SUM} $Differential$ \textbf{FROM} MATCH}
-                \State{\qquad\qquad\quad \textbf{WHERE} MATCH.$Winner=team\_name$}
-                \State{$negative$ = \textbf{SELECT SUM} $Differential$ \textbf{FROM} MATCH}
-                \State{\qquad\qquad\quad \textbf{WHERE} MATCH.$Loser=team\_name$}
-                \State{\textbf{SELECT AVG} $Differential$ \textbf{FROM} MATCH}
-                \State{\textbf{return} $positve-negative$}
+                \Function {Differential}{league}
+                \State{$matches\_played$ = \textbf{SELECT} * \textbf{FROM} MATCH}
+                \State{\quad\quad\quad\quad\quad\quad\quad\quad\textbf{JOIN} MATCH\_LEAGUE ON MATCH\_LEAGUE.$league$}
+                \State{\quad\quad\quad\quad\quad\quad\quad\quad\textbf{WHERE} MATCH\_LEAGUE.league\_id$==$league$.id$}
+                \State{$avg\_dif$ = \textbf{SELECT} AVG(matches\_played$.Differential$) \textbf{FROM} matches\_played}
+                \State{\quad\quad\quad\quad\textbf{WHERE} matches\_played$.Differential > 0$}
+                \State{\textbf{print} $avg\_dif$}
                 \EndFunction
             \end{algorithmic}
         \end{algorithm}
+        \newpage
         \item Query rankings (Order By):
         \begin{algorithm}[H]
             \verb|!rankings|
@@ -220,21 +234,8 @@ Please note that while the query syntax is made to mimic SQL, it is not 100\% th
             \begin{algorithmic}
                 \Function {Rankings}{}
                 \State{$rankings$ = \textbf{SELECT} $team$ \textbf{FROM} TEAM}
-                \State{\qquad\qquad\quad \textbf{ORDERBY} $\textsc{Differential($team$)}+\textsc{Wins($teams$)}$}
-                \State{\qquad\qquad\qquad\qquad\qquad\quad  $ > \textsc{Differential($previous\_team$)}+\textsc{Wins($previous\_teams$)}$}
+                \State{\qquad\qquad\quad \textbf{ORDERBY} $team.Differential$ \textbf{DESCENDING}}
                 \State{print $rankings$}
-                \EndFunction
-            \end{algorithmic}
-        \end{algorithm}
-        \item Query matches played (Join):
-        \begin{algorithm}[H]
-            \verb|!matchesplayed|
-            \label{pseudoPSO}
-            \begin{algorithmic}
-                \Function {Matches\_Played}{}
-                \State{$matches$ = \textbf{SELECT} $ID$ \textbf{FROM} MATCH}
-                \State{\qquad \textbf{ WHERE $ID != NULL$} }
-                \State{\textbf{print} $matches$ as URL}
                 \EndFunction
             \end{algorithmic}
         \end{algorithm}
@@ -259,12 +260,16 @@ Please note that while the query syntax is made to mimic SQL, it is not 100\% th
 \section*{Installation Instructions}
 
 \newpage
+.
+\newpage
 \section*{User Manual}
 Below is documentation related to using the web application and discord bot to interact with the database.
 \subsection*{Using the Web Application}
   To start the web application, run deploy\_app.sh to begin the web application, and go to \url{http://127.0.0.1:5000/} in your web browser. For more details, follow the instructions in Installation Instructions.\\\\
   Once open, you can create a new league, manage an existing one, or view a draft list.\\
-  \includegraphics[scale=.3]{landing.png}
+  \begin{center}
+    \includegraphics[scale=.3]{landing.png}
+  \end{center}
 
   \subsubsection*{Create League}
   To create a league,navigate to the Create League section under Admin on the navbar. Once there, the interface should be relatively straightforward. 
@@ -275,21 +280,42 @@ Below is documentation related to using the web application and discord bot to i
   Once all your users have been added, the next step is to select a tier list. 
   Currently, only premade lists are avaialble to use. But later on, the option to import your own will be supported.
   Last, hit the Submit League Button. Upon reload, your league will have been created!\\
-  \includegraphics[scale=.3]{create_league.png}
+  \begin{center}
+    \includegraphics[scale=.3]{create_league.png}
+  \end{center}
 
   \subsubsection*{Manage League}
   To manage a league, navigate to the Manage League section under Admin on the navbar. Once there, you will have a couple options.
   You can either delete an entire league, or delete a user from a league. Deleting a league deletes all users, all teams, and all matches. 
   Deleting a user delete's that user's team and removes their matches.
   There will be Remove User section for each league, since each league has unique users. \\
-  \includegraphics[scale=.3]{manage_league.png}
+  \begin{center}
+    \includegraphics[scale=.3]{manage_league.png}
+  \end{center}
 
   \subsubsection*{View Draft List}
   To view a draft list, navigate to the View Draft Lists section. Once there, simply select a league and hit submit to view the draft list being used for that league.\\
-  \includegraphics[scale=.3]{view_dl.png}
-  \includegraphics[scale=.3]{view_dl2.png}
+  \begin{center}
+    \includegraphics[scale=.3]{view_dl.png}
+    \includegraphics[scale=.3]{view_dl2.png}
+  \end{center}
+
+\subsection*{Create Your own Discord Bot Instance (Optional)}
+The way Discord bot operate is that they are tied to a Bot Token, which is what allows the bot to log into Discord.
+A bot has one token, and this token is required for a bot to enter any Discord server and interact.
+For convenience, a useable bot token has been provided so that a grader can easily run and test the bot. 
+However, if one would like to run their own instance of the bot, a new Discord Bot Token will need to be generated.
+
+If you would like to create your own Discord Bot, using Drafty's codebase, the following pages prvoide sufficient information:
+\begin{enumerate}
+  \item Creating a bot application:\\ \url{https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot}
+  \item Adding Bot to a server:\\\url{https://discordjs.guide/preparations/adding-your-bot-to-servers.html}
+\end{enumerate}
+Again, this is not a necessary step, as the provided zip file comes with a useable bot token, but it can be explored if the user wishes.
+
 
 \subsection*{Using The Discord Bot}
+
 To start the Discord bot, run deploy\_bot.sh to begin the web application, and type in the name of the league you would like to run the league for. 
 For more details, follow the instructions in Installation Instructions. 
 The name of the league included in the dummy data is "YWNB Draft League"\\\\
@@ -298,56 +324,73 @@ The name of the league included in the dummy data is "YWNB Draft League"\\\\
 The first step for all participants in the draft league is to register their showdown username. 
 To do this, users should perform the following command: \verb|!regshowdown ohsnapplegcc|. 
 Upon completion, if no one is already using that showdown username, Drafty will inform you that the update was a success.\\
-\includegraphics[scale=.5]{regshowdown.png}
-\\\\
+\begin{center}
+  \includegraphics[scale=.5]{regshowdown.png}
+\end{center}
+
 \subsubsection*{Drafting}
 To enable Pokemon drafting for teams, an admin must first enable it using \verb|!draft|. 
 Once enabled, users are able to add Pokemon to their team.\\
-\includegraphics[scale=.5]{draft.png}
-\\\\
+\begin{center}
+  \includegraphics[scale=.5]{draft.png}
+\end{center}
+
 \subsubsection*{Redrafting}
 To enable rerafting for teams, an admin must first enable it using \verb|!redraft|. 
 Once enabled, users are able to swap out Pokemon in their team.\\
-\includegraphics[scale=.5]{redraft.png}
-\\\\
+\begin{center}
+  \includegraphics[scale=.5]{redraft.png}
+\end{center}
 \subsubsection*{View Pokemon}
 To quickly access a Pokemon's serebii page, simply enter \verb|!pokemon <pokemon name>|.\\
-\includegraphics[scale=.5]{pokemon.png}
-\\\\
+\begin{center}
+  \includegraphics[scale=.5]{pokemon.png}
+\end{center}
 \subsubsection*{View User Info}
 To view a user's info, simply enter \verb|!userinfo <user's name>| to view all stats related to that coach and their team.
 Alternatively, \verb|!userinfo| can be used with no parameters to view the userinfo for yourself.
 When searching for a user, you can either type their full discord username (ex: Oh Snapple\#2136), or a piece of their name (ex: snapple).\\
-\includegraphics[scale=.5]{userinfo.png}
-\\\\
+\begin{center}
+  \includegraphics[scale=.5]{userinfo.png}
+\end{center}
 \subsubsection*{Rankings}
 To view the rankings in the league, type the commmand \verb|!rankings|. This will display the teams in order of differential.\\
-\includegraphics[scale=.5]{rankings.png}
-\\\\
+\begin{center}
+  \includegraphics[scale=.5]{rankings.png}
+\end{center}
 \subsubsection*{Calculate Average Differential}
 To view the average match differential for the league, type \verb|!average| or \verb|!avg|.\\
-\includegraphics[scale=.5]{avg.png}
-\\\\
+\begin{center}
+  \includegraphics[scale=.5]{avg.png}
+\end{center}
+\newpage
 \subsubsection*{View User's Matches}
 To view all the matches a user plays in the league, type \verb|!matches <user's name>| or \verb|!matches|. 
 This will display every match the user has to play in weekly order.\\
-\includegraphics[scale=.5]{matches.png}
-\\\\
+\begin{center}
+  \includegraphics[scale=.5]{matches.png}
+\end{center}
 \subsubsection*{View a Match Played}
 To find the url for a specific match, type \verb|!match <user1>,<user2>|. \textbf{Make sure the usernames are seprated by a comma only.} 
 This is because usernames can include spaces, so it is not a significant distiguisher. If a match hasn't been played, Drafty will let you know.\\
-\includegraphics[scale=.5]{match_played.png}
+\begin{center}
+  \includegraphics[scale=.5]{match_played.png}
+\end{center}
 \newpage
 \subsubsection*{View User's Matches Played}
 To get a list of all of a user's played matches, type \verb|!matchesplayed <username>|.
 Alternatively, \verb|!matchesplayed|can be used to get urls for the matches played by the current discord user.\\ 
-\includegraphics[scale=.5]{matches_played.png}
+\begin{center}
+  \includegraphics[scale=.5]{matches_played.png}
+\end{center}
 \newpage
 \subsubsection*{Delete User}
 Admins can delete users from the league through Drafty as well, simply type \verb|!delete <discord\_username>|.
 The username must be exactly the user's discord name (ex: Oh Snapple\#2136). This is to ensure no accidental deletions.\\
-\includegraphics[scale=.5]{delete.png}
 
+\begin{center}
+  \includegraphics[scale=.5]{delete.png}
+\end{center}
 
 \end{document}
     
